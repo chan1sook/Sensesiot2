@@ -1,0 +1,11 @@
+{
+  "folders": [
+	{
+		"path": "sensesiot-ui"
+	},
+	{
+		"path": "sensesiot-api"
+	}
+],
+  "settings": {}
+}
