@@ -1,4 +1,0 @@
-# Sensesiot.net
-
-- ui
-- api
