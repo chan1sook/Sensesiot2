@@ -14,7 +14,9 @@
               <b-dropdown-item href="/sensesiot/dashboard">
                 Dashboard
               </b-dropdown-item>
-              <b-dropdown-item disabled> IoT Garage </b-dropdown-item>
+              <b-dropdown-item href="/sensesiot/iotgarage">
+                IoT Garage
+              </b-dropdown-item>
               <b-dropdown-item disabled> Report </b-dropdown-item>
               <b-dropdown-divider></b-dropdown-divider>
               <b-dropdown-item href="/sensesiot/shop"> Shops </b-dropdown-item>

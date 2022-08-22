@@ -31,7 +31,7 @@
           class="m-auto"
           :widget="widget"
           :style="controlBaseStyle"
-          :disabled="editing"
+          :disabled="editing || noControl"
           @click="onClick"
         >
         </push-control-button-subwidget>
@@ -42,7 +42,7 @@
           :widget="widget"
           :state="state"
           :style="controlBaseStyle"
-          :disabled="editing"
+          :disabled="editing || noControl"
           @change="onChange"
         ></range-control-subwidget>
         <toggle-control-button-subwidget
@@ -52,7 +52,7 @@
           :widget="widget"
           :state="state"
           :style="controlBaseStyle"
-          :disabled="editing"
+          :disabled="editing || noControl"
           @change="onChange"
         ></toggle-control-button-subwidget>
       </div>
@@ -81,6 +81,10 @@ export default {
         return 'off'
       },
     },
+    noControl: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -102,7 +106,7 @@ export default {
   },
   methods: {
     onClick() {
-      if (!this.editing) {
+      if (!this.editing && !this.noControl) {
         this.$emit('control', {
           id: this.widget._id,
           controlDevice: this.widget.controlDevice,
@@ -112,7 +116,7 @@ export default {
       }
     },
     onChange(value) {
-      if (!this.editing) {
+      if (!this.editing && !this.noControl) {
         this.$emit('control', {
           id: this.widget._id,
           controlDevice: this.widget.controlDevice,

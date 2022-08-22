@@ -1,7 +1,7 @@
 <template>
   <sensesiot-base-container>
     <b-container class="mt-4" style="flex-grow: 1">
-      <b-jumbotron class="shadow-2">
+      <sensesiot-content-container>
         <h2 class="text-center mb-4">
           <font-awesome-icon :icon="['fas', 'user']" fixed-width />
           Account Info
@@ -34,7 +34,7 @@
             </b-overlay>
           </div>
         </template>
-      </b-jumbotron>
+      </sensesiot-content-container>
     </b-container>
   </sensesiot-base-container>
 </template>
@@ -44,7 +44,7 @@ import { formatDateTime } from '~/utils/datetime'
 
 export default {
   name: 'AccountInfoPage',
-  middlewares: ['auth'],
+  middleware: ['auth'],
   data() {
     return {
       logoutLoading: false,

@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import objectHash from "object-hash";
 import { sensesiotV2 } from "../../database/mongodb.js";
 import { preditNewCredit } from "./credits.js";
 
@@ -22,6 +23,11 @@ export async function createSensesiotDevice(uid, { name = "", model = "" }) {
   const deviceCol = sensesiotV2.collection("devices");
   const data = {
     uid,
+    deviceKey: objectHash({
+      name,
+      model,
+      createTime: new Date(),
+    }),
     name,
     model,
     createTime: new Date(),

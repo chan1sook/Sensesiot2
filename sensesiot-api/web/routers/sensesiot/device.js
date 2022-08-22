@@ -1,18 +1,17 @@
 import { Router, json } from "express";
+import {
+  createSensesiotDevice,
+  getSensesiotDevicesByUser,
+  removeSensesiotDevice,
+  updateSensesiotDevice,
+} from "../../../services/sensesiot/device.js";
+import { error } from "../../../utils/logging.js";
 
 import WebError from "../../../utils/weberror.js";
-import { error } from "../../../utils/logging.js";
-import {
-  createSensesiotDashboard,
-  getSensesiotDashboardById,
-  getSensesiotDashboardsByUser,
-  removeSensesiotDashboard,
-  updateSensesiotDashboard,
-} from "../../../services/sensesiot/dashboard.js";
 
 const router = Router();
 
-router.get("/dashboards", async (req, res) => {
+router.get("/devices", async (req, res) => {
   try {
     if (!req.session) {
       throw new WebError("No Session", 500);
@@ -21,13 +20,11 @@ router.get("/dashboards", async (req, res) => {
       throw new WebError("Forbidden", 403);
     }
 
-    const dashboards = await getSensesiotDashboardsByUser(
-      req.session.userData.uid
-    );
+    const devices = await getSensesiotDevicesByUser(req.session.userData.uid);
 
     res.status(200).json({
       status: "OK",
-      dashboards,
+      devices,
     });
   } catch (err) {
     let code = 500;
@@ -45,37 +42,7 @@ router.get("/dashboards", async (req, res) => {
   }
 });
 
-router.get("/dashboard/:id", async (req, res) => {
-  try {
-    const dashboard = await getSensesiotDashboardById(req.params.id);
-
-    if (!dashboard.publicAccess) {
-      if (!req.session.userData || dashboard.uid !== req.session.userData.uid) {
-        throw new WebError("Forbidden", 403);
-      }
-    }
-
-    res.status(200).json({
-      status: "OK",
-      dashboard,
-    });
-  } catch (err) {
-    let code = 500;
-
-    if (err instanceof WebError) {
-      code = err.code;
-    }
-
-    error(err.message, { name: "Web", tags: [`${code}`] });
-    res.status(code).json({
-      status: "Error",
-      code,
-      message: err.message,
-    });
-  }
-});
-
-router.post("/dashboard/add", json(), async (req, res) => {
+router.post("/device/add", json(), async (req, res) => {
   try {
     if (!req.session) {
       throw new WebError("No Session", 500);
@@ -88,14 +55,14 @@ router.post("/dashboard/add", json(), async (req, res) => {
       throw new WebError("Missing Parameter(s)", 400);
     }
 
-    const dashboard = await createSensesiotDashboard(
+    const device = await createSensesiotDevice(
       req.session.userData.uid,
       req.body
     );
 
     res.status(200).json({
       status: "OK",
-      dashboard,
+      device,
     });
   } catch (err) {
     let code = 500;
@@ -113,7 +80,7 @@ router.post("/dashboard/add", json(), async (req, res) => {
   }
 });
 
-router.post("/dashboard/edit/:id", json(), async (req, res) => {
+router.post("/device/edit/:id", json(), async (req, res) => {
   try {
     if (!req.session) {
       throw new WebError("No Session", 500);
@@ -126,7 +93,7 @@ router.post("/dashboard/edit/:id", json(), async (req, res) => {
       throw new WebError("Missing Parameter(s)", 400);
     }
 
-    const dashboard = await updateSensesiotDashboard(
+    const device = await updateSensesiotDevice(
       req.session.userData.uid,
       req.params.id,
       req.body
@@ -134,7 +101,7 @@ router.post("/dashboard/edit/:id", json(), async (req, res) => {
 
     res.status(200).json({
       status: "OK",
-      dashboard,
+      device,
     });
   } catch (err) {
     let code = 500;
@@ -152,7 +119,7 @@ router.post("/dashboard/edit/:id", json(), async (req, res) => {
   }
 });
 
-router.post("/dashboard/delete/:id", async (req, res) => {
+router.post("/device/delete/:id", async (req, res) => {
   try {
     if (!req.session) {
       throw new WebError("No Session", 500);
@@ -161,7 +128,7 @@ router.post("/dashboard/delete/:id", async (req, res) => {
       throw new WebError("Forbidden", 403);
     }
 
-    await removeSensesiotDashboard(req.session.userData.uid, req.params.id);
+    await removeSensesiotDevice(req.session.userData.uid, req.params.id);
 
     res.status(200).json({
       status: "OK",

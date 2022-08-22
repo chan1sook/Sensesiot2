@@ -30,11 +30,11 @@
             >
               <font-awesome-icon :icon="['fas', 'plus']" fixed-width />
 
-              <span class="d-sm-none">Create</span>
+              <span class="d-none d-lg-inline">Create</span>
             </b-button>
             <b-button v-else variant="danger" @click="showDeleteDashboardModal">
               <font-awesome-icon :icon="['fas', 'trash']" fixed-width />
-              <span class="d-sm-none">Delete</span>
+              <span class="d-none d-lg-inline">Delete</span>
             </b-button>
           </b-input-group-append>
         </b-input-group>
@@ -46,22 +46,22 @@
         >
           <font-awesome-icon :icon="['fas', 'pencil']" fixed-width />
 
-          <span class="d-sm-none">Edit</span>
+          <span class="d-none d-lg-inline">Edit</span>
         </b-button>
 
         <template v-else-if="editMode">
           <b-button-group>
             <b-button variant="warning" @click="showEditDashboardModal">
               <font-awesome-icon :icon="['fas', 'cog']" fixed-width />
-              <span class="d-sm-none">Setting</span>
+              <span class="d-none d-lg-inline">Setting</span>
             </b-button>
             <b-button variant="success" @click="editDashboard">
               <font-awesome-icon :icon="['fas', 'save']" fixed-width />
-              <span class="d-sm-none">Save</span>
+              <span class="d-none d-lg-inline">Save</span>
             </b-button>
             <b-button variant="secondary" @click="editMode = false">
               <font-awesome-icon :icon="['fas', 'history']" fixed-width />
-              <span class="d-sm-none">Cancel</span>
+              <span class="d-none d-lg-inline">Cancel</span>
             </b-button>
           </b-button-group>
 
@@ -70,6 +70,11 @@
             New Widget
           </b-button>
         </template>
+
+        <b-button v-if="!editMode" @click="showShareLinkDashboardModal">
+          <font-awesome-icon :icon="['fas', 'share']" fixed-width />
+          <span class="d-none d-lg-inline"> Share</span>
+        </b-button>
       </b-button-toolbar>
       <gridstack-container
         style="margin-top: 3em"
@@ -107,6 +112,11 @@
       @ok="deleteDashboard"
     >
     </delete-sensesiot-dashboard-modal>
+    <share-link-sensesiot-dashboard-modal
+      id="modal-share-link-dashboard"
+      :dashboard-data="modalDashboardData"
+    >
+    </share-link-sensesiot-dashboard-modal>
     <add-sensesiot-widget-modal
       id="modal-new-widget"
       :credit-info="creditInfo"
@@ -129,6 +139,7 @@ import { v4 as uuidv4 } from 'uuid'
 import CreateSensesiotDashboardModal from '~/components/modals/CreateSensesiotDashboardModal.vue'
 import EditSensesiotDashboardModal from '~/components/modals/EditSensesiotDashboardModal.vue'
 import DeleteSensesiotDashboardModal from '~/components/modals/DeleteSensesiotDashboardModal.vue'
+import ShareLinkSensesiotDashboardModal from '~/components/modals/ShareLinkSensesiotDashboardModal.vue'
 import AddSensesiotWidgetModal from '~/components/modals/AddSensesiotWidgetModal.vue'
 import ConfigSensesiotWidgetModal from '~/components/modals/ConfigSensesiotWidgetModal.vue'
 
@@ -145,10 +156,11 @@ export default {
     CreateSensesiotDashboardModal,
     EditSensesiotDashboardModal,
     DeleteSensesiotDashboardModal,
+    ShareLinkSensesiotDashboardModal,
     AddSensesiotWidgetModal,
     ConfigSensesiotWidgetModal,
   },
-  middlewares: ['auth'],
+  middleware: ['auth'],
   async asyncData({ $axios, store, error }) {
     try {
       const { dashboards } = await $axios.$get('/api/sensesiot/dashboards')
@@ -200,17 +212,6 @@ export default {
         (ele) => ele._id === this.selectedDashboardId
       )
       return dashboardInfo || null
-    },
-    widgets() {
-      let target = this.selectedDashboard
-      if (this.editMode) {
-        target = this.editDashboardData
-      }
-
-      if (!target || !Array.isArray(target.widgets)) {
-        return []
-      }
-      return target.widgets
     },
     theme() {
       let target = this.selectedDashboard
@@ -297,7 +298,7 @@ export default {
       }
     },
     showEditDashboardModal() {
-      this.modalDashboardData = this.modalDashboardData = {
+      this.modalDashboardData = {
         ...getDefaultDashboardData(),
         ...JSON.parse(JSON.stringify(this.editDashboardData)),
       }
@@ -500,6 +501,13 @@ export default {
           title: 'Error',
         })
       }
+    },
+    showShareLinkDashboardModal() {
+      this.modalDashboardData = {
+        ...getDefaultDashboardData(),
+        ...JSON.parse(JSON.stringify(this.selectedDashboard)),
+      }
+      this.$bvModal.show('modal-share-link-dashboard')
     },
     onBeforeUnload(ev) {
       if (this.editMode) {

@@ -2,28 +2,21 @@
   <b-modal
     :id="id"
     centered
-    title="Create Dashboard"
+    title="Create Device"
     no-stacking
     no-close-on-esc
     no-close-on-backdrop
-    :ok-disabled="!isDashboardDataValid"
+    :ok-disabled="!isDeviceDataValid"
     @ok="onOk"
   >
-    <b-form-group label="Dashboard Name">
-      <b-input v-model="modalDashboardData.name" type="text"></b-input>
+    <b-form-group label="Device Key">
+      <b-input type="text" disabled value="Will generate when create"></b-input>
     </b-form-group>
-    <b-form-group label="Dashboard Access">
-      <b-select v-model="modalDashboardData.publicAccess">
-        <b-select-option :value="true">Public</b-select-option>
-        <b-select-option :value="false">Private</b-select-option>
-      </b-select>
+    <b-form-group label="Device Name">
+      <b-input v-model="modalDeviceData.name" type="text"></b-input>
     </b-form-group>
-    <b-form-group label="Theme">
-      <b-select
-        v-model="modalDashboardData.theme"
-        :options="sensesiotThemeOptions"
-      >
-      </b-select>
+    <b-form-group label="Device Model Name">
+      <b-input v-model="modalDeviceData.model" type="text"></b-input>
     </b-form-group>
     <div class="mt-2">
       <div v-if="creditInfo.predit > creditInfo.current" class="text-center">
@@ -34,7 +27,7 @@
         <font-awesome-icon :icon="['fas', 'bolt']" fixed-width />
       </div>
       <div v-else class="text-center">
-        <b>First Dashboard is Free!</b>
+        <b>First Device is Free!</b>
       </div>
       <div v-if="creditInfo.max >= creditInfo.predit" class="text-center">
         <b>Remain: </b>
@@ -56,16 +49,14 @@
 </template>
 
 <script>
-import { sensesiotThemeOptions } from '~/utils/dashboard'
-
 export default {
-  name: 'CreateSensesiotDashboardModal',
+  name: 'CreateSensesiotDeviceModal',
   props: {
     id: {
       type: String,
       required: true,
     },
-    dashboardData: {
+    deviceData: {
       type: Object,
       default() {
         return {}
@@ -80,32 +71,28 @@ export default {
   },
   data() {
     return {
-      modalDashboardData: {
+      modalDeviceData: {
         name: '',
-        publicAccess: false,
-        theme: 'default',
+        model: '',
       },
     }
   },
   computed: {
-    isDashboardDataValid() {
-      return this.modalDashboardData.name !== ''
-    },
-    sensesiotThemeOptions() {
-      return sensesiotThemeOptions
+    isDeviceDataValid() {
+      return this.modalDeviceData.name !== ''
     },
   },
   watch: {
-    dashboardData: {
+    deviceData: {
       immediate: true,
       handler(value) {
-        this.modalDashboardData = JSON.parse(JSON.stringify(value))
+        this.modalDeviceData = JSON.parse(JSON.stringify(value))
       },
     },
   },
   methods: {
     onOk() {
-      this.$emit('ok', JSON.parse(JSON.stringify(this.modalDashboardData)))
+      this.$emit('ok', JSON.parse(JSON.stringify(this.modalDeviceData)))
     },
   },
 }

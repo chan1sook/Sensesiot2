@@ -1,7 +1,7 @@
 <template>
   <sensesiot-base-container>
     <b-container class="mt-4" style="flex-grow: 1">
-      <b-jumbotron class="shadow-2">
+      <sensesiot-content-container>
         <h2 class="text-center mb-4">
           <font-awesome-icon :icon="['fas', 'shop']" fixed-width />
           Coin Shop
@@ -39,7 +39,7 @@
             </b-card>
           </b-col>
         </b-row>
-      </b-jumbotron>
+      </sensesiot-content-container>
     </b-container>
     <b-modal
       id="modal-coin-confirm"

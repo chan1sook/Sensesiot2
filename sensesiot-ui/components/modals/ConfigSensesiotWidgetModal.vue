@@ -6,6 +6,8 @@
     title="Edit Widget"
     no-stacking
     no-enforce-focus
+    no-close-on-esc
+    no-close-on-backdrop
     scrollable
     @ok="onOk"
   >

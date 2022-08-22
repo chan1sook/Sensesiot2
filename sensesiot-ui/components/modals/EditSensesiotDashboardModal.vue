@@ -4,6 +4,8 @@
     centered
     title="Edit Dashboard"
     no-stacking
+    no-close-on-esc
+    no-close-on-backdrop
     :ok-disabled="!isDashboardDataValid"
     @ok="onOk"
   >

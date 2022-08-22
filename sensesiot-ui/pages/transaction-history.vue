@@ -92,7 +92,7 @@ import { formatCurrency } from '~/utils/price'
 
 export default {
   name: 'TransactionHistoryPage',
-  middlewares: ['auth'],
+  middleware: ['auth'],
   data() {
     const today = new Date()
     return {

@@ -1,7 +1,7 @@
 <template>
   <sensesiot-base-container>
     <b-container class="mt-4" style="flex-grow: 1">
-      <b-jumbotron class="shadow-2">
+      <sensesiot-content-container>
         <h2 class="text-center mb-4">
           <font-awesome-icon :icon="['fas', 'shop']" fixed-width />
           Credit Shop
@@ -49,7 +49,7 @@
             </b-card>
           </b-col>
         </b-row>
-      </b-jumbotron>
+      </sensesiot-content-container>
     </b-container>
     <b-modal
       id="modal-credit-confirm"
@@ -149,7 +149,7 @@ import { formatCurrency, isPriceEqual } from '~/utils/price'
 
 export default {
   name: 'SensesiotShopPage',
-  middlewares: ['auth'],
+  middleware: ['auth'],
   async asyncData({ $axios, error }) {
     try {
       const { products } = await $axios.$get('/api/sensesiot/shop/credits')

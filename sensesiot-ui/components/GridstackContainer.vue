@@ -45,6 +45,7 @@
           :state="dataFunction(widget)"
           :gridstack="gridstack"
           :editing="editing"
+          :no-control="noControl"
           @control="pushControl"
           @edit="editWidget"
           @remove="removeWidget"
@@ -58,7 +59,6 @@
           :status="conditionStatusFunction(widget)"
           :gridstack="gridstack"
           :editing="editing"
-          @control="pushControl"
           @edit="editWidget"
           @remove="removeWidget"
         />
@@ -111,6 +111,10 @@ export default {
       default: 'default',
     },
     editing: {
+      type: Boolean,
+      default: false,
+    },
+    noControl: {
       type: Boolean,
       default: false,
     },
@@ -177,11 +181,6 @@ export default {
     clearInterval(this.id)
 
     window.removeEventListener('resize', this.onResize)
-    try {
-      this.gridstack?.destroy(false)
-    } catch (error) {
-      console.error(error)
-    }
 
     this.gridstack = null
     this.ready = false
