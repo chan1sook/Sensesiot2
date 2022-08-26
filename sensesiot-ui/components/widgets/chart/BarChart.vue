@@ -21,6 +21,7 @@ import {
   Legend,
   BarElement,
   LinearScale,
+  TimeScale,
   TimeSeriesScale,
 } from 'chart.js'
 import 'chartjs-adapter-date-fns'
@@ -31,6 +32,7 @@ ChartJS.register(
   Legend,
   BarElement,
   LinearScale,
+  TimeScale,
   TimeSeriesScale
 )
 

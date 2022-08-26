@@ -41,6 +41,7 @@
     "justgage": "^1.5.1",
     "marked": "^4.0.18",
     "nuxt": "^2.15.8",
+    "socket.io-client": "^4.5.1",
     "uuid": "^8.3.2",
     "validator": "^13.7.0",
     "vue": "^2.6.14",

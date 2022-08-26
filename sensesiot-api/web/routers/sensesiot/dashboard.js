@@ -9,6 +9,7 @@ import {
   removeSensesiotDashboard,
   updateSensesiotDashboard,
 } from "../../../services/sensesiot/dashboard.js";
+import { fetchSensesiotDataByWidgets } from "../../../services/sensesiot/widget.js";
 
 const router = Router();
 
@@ -165,6 +166,38 @@ router.post("/dashboard/delete/:id", async (req, res) => {
 
     res.status(200).json({
       status: "OK",
+    });
+  } catch (err) {
+    let code = 500;
+
+    if (err instanceof WebError) {
+      code = err.code;
+    }
+
+    error(err.message, { name: "Web", tags: [`${code}`] });
+    res.status(code).json({
+      status: "Error",
+      code,
+      message: err.message,
+    });
+  }
+});
+
+router.get("/dashboard-data/:id", async (req, res) => {
+  try {
+    const dashboard = await getSensesiotDashboardById(req.params.id);
+
+    if (!dashboard.publicAccess) {
+      if (!req.session.userData || dashboard.uid !== req.session.userData.uid) {
+        throw new WebError("Forbidden", 403);
+      }
+    }
+
+    const dashboardData = await fetchSensesiotDataByWidgets(dashboard.widgets);
+
+    res.status(200).json({
+      status: "OK",
+      dashboardData,
     });
   } catch (err) {
     let code = 500;

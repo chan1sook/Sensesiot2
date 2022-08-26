@@ -8,8 +8,10 @@
     >
       <b-button-toolbar class="position-fixed dashboard-toolbar-top">
         <b-input-group prepend="Dashboard" style="flex-grow: 1">
-          <b-select disabled>
-            <b-select-option selected>{{ dashboard.name }}</b-select-option>
+          <b-select :value="null" disabled>
+            <b-select-option :value="null">{{
+              dashboard.name
+            }}</b-select-option>
           </b-select>
         </b-input-group>
         <b-button @click="showShareLinkDashboardModal">
@@ -20,6 +22,7 @@
       <gridstack-container
         style="margin-top: 3em"
         :widgets="dashboard.widgets"
+        :data-function="getWidgetData"
         :theme="theme"
         no-control
       ></gridstack-container>
@@ -33,7 +36,8 @@
 </template>
 
 <script>
-import { getThemeSetting } from '~/utils/dashboard'
+import { getThemeSetting, getWidgetData, onSioMqtt } from '~/utils/dashboard'
+import SocketIOMixin from '~/mixins/socketio.js'
 
 import ShareLinkSensesiotDashboardModal from '~/components/modals/ShareLinkSensesiotDashboardModal.vue'
 
@@ -42,6 +46,7 @@ export default {
   components: {
     ShareLinkSensesiotDashboardModal,
   },
+  mixins: [SocketIOMixin],
   async asyncData({ $axios, params, error }) {
     try {
       const { dashboard } = await $axios.$get(
@@ -61,14 +66,13 @@ export default {
   data() {
     return {
       dashboard: {},
+      dashboardData: [],
+      dashboardDataId: 0,
     }
   },
   computed: {
     theme() {
-      let target = this.dashboard
-      if (this.editMode) {
-        target = this.editDashboardData
-      }
+      const target = this.dashboard
 
       if (!target) {
         return 'default'
@@ -79,7 +83,38 @@ export default {
       return getThemeSetting(this.theme)
     },
   },
+  mounted() {
+    this.refreshDashboardData()
+
+    this.socketio.emit('requestChannel', this.dashboard.uid)
+    this.socketio.on('mqtt', this.onSioMqtt)
+  },
+  beforeDestroy() {
+    this.socketio.off('mqtt')
+  },
   methods: {
+    onSioMqtt(data) {
+      onSioMqtt(this.dashboardData, data)
+    },
+    async refreshDashboardData() {
+      this.dashboardDataId += 1
+      const fetchId = this.dashboardDataId
+
+      const dashboardid = this.dashboard._id
+      const { dashboardData } = await this.$axios.$get(
+        `/api/sensesiot/dashboard-data/${dashboardid}`
+      )
+
+      if (
+        dashboardid === this.dashboard._id &&
+        fetchId === this.dashboardDataId
+      ) {
+        this.dashboardData = dashboardData
+      }
+    },
+    getWidgetData(widget) {
+      return getWidgetData(this.dashboardData, widget)
+    },
     showShareLinkDashboardModal() {
       this.$bvModal.show('modal-share-link-dashboard')
     },

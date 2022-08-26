@@ -22,11 +22,14 @@ function dbNameOf(name) {
     ? name
     : `${name}-${nodeEnv || "development"}`;
 }
+
+export const aedesdb = mongodb.db(dbNameOf("sensesiotAedes"));
 export const sensesiotBase = mongodb.db(dbNameOf("sensesiotBase"));
 export const sensesiotV2 = mongodb.db(dbNameOf("sensesiotV2"));
 
 export default Object.freeze({
   init,
+  aedesdb,
   sensesiotBase,
   sensesiotV2,
 });

@@ -49,18 +49,7 @@ export default {
   name: 'GaugeSensesiotWidget',
   extends: DefaultSensesiotWidget,
   props: {
-    value: {
-      type: Number,
-      default: 0.5,
-    },
-    min: {
-      type: Number,
-      default: 0,
-    },
-    max: {
-      type: Number,
-      default: 1,
-    },
+    value: { type: Number, default: null },
   },
   data() {
     return {
@@ -71,11 +60,11 @@ export default {
   computed: {
     gaugeCurrentDeg() {
       let r
-      const b = this.max - this.min
+      const b = this.gaugeMax - this.gaugeMin
       if (!Number.isFinite(b) || b === 0 || !Number.isFinite(this.value)) {
-        r = 0
+        r = 0.5
       } else {
-        r = (this.value - this.min) / b
+        r = (this.value - this.gaugeMin) / b
       }
 
       r = Math.min(1, Math.max(r, 0)) * 180
@@ -121,6 +110,22 @@ export default {
       }
 
       return styles
+    },
+    gaugeMin() {
+      const value = parseFloat(this.widget.gaugeMin)
+      if (Number.isFinite(value)) {
+        return value
+      }
+
+      return 0
+    },
+    gaugeMax() {
+      const value = parseFloat(this.widget.gaugeMax)
+      if (Number.isFinite(value)) {
+        return value
+      }
+
+      return 1
     },
     valuePretty() {
       if (!Number.isFinite(this.value)) {

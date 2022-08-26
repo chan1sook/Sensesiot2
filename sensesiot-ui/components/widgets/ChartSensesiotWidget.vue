@@ -80,12 +80,25 @@ export default {
     AreaChart,
   },
   extends: DefaultSensesiotWidget,
+  props: {
+    value: {
+      type: Array,
+      default() {
+        return []
+      },
+    },
+  },
   data() {
     return {
       aspectRatio: 1.5,
       controlMaxWidth: 200,
       width: 400,
       height: 300,
+      minX: Date.now() - 15 * 60 * 1000,
+      maxX: Date.now(),
+      minY: undefined,
+      maxY: undefined,
+      refreshId: 0,
     }
   },
   computed: {
@@ -108,7 +121,7 @@ export default {
             backgroundColor: this.getFgColor(this.widget, this.theme),
             borderColor: this.getBgColor(this.widget, this.theme),
             fill: this.getFill(this.theme),
-            data: this.actualData,
+            data: this.value,
           },
         ],
       }
@@ -124,10 +137,11 @@ export default {
               display: Boolean(this.widget.yAxisLabel),
               text: this.widget.yAxisLabel || '',
             },
-            ...this.limitY,
+            min: this.minY,
+            max: this.maxY,
           },
           x: {
-            type: 'timeseries',
+            type: 'time',
             ticks: {
               color: this.getLabelColor(this.widget, this.theme),
             },
@@ -151,7 +165,8 @@ export default {
                 month: 'MMM yyyy',
               },
             },
-            ...this.limitX,
+            min: this.minX,
+            max: this.maxX,
           },
         },
         plugins: {
@@ -182,20 +197,24 @@ export default {
             : undefined,
       }
     },
-    actualData() {
-      const length = this.widget.xAxisDuration
-        ? Math.floor(this.widget.xAxisDuration / 60000)
-        : 15
-      return new Array(length).fill(undefined).map((ele, i) => {
-        return {
-          x: new Date(Date.now() + (i - length) * 60000),
-          y: Math.round(Math.random() * 100),
-        }
-      })
+  },
+  watch: {
+    value() {
+      this.resetAxis()
+
+      clearInterval(this.refreshId)
+      this.refreshId = setInterval(this.resetAxis, 5000)
     },
   },
   mounted() {
+    this.resetAxis()
+
+    this.refreshId = setInterval(this.resetAxis, 5000)
+
     this.resizeChart()
+  },
+  beforeDestroy() {
+    clearInterval(this.refreshId)
   },
   methods: {
     getLabelName(widget) {
@@ -240,6 +259,19 @@ export default {
       }
 
       return getThemeSetting(theme)['--widget-text-color']
+    },
+    resetAxis() {
+      this.minX = Date.now() - (this.widget.xAxisDuration || 15 * 60 * 1000)
+      this.maxX = Date.now()
+
+      this.minY =
+        !this.widget.yAxisAuto && Number.isFinite(this.widget.yAxisMin)
+          ? this.widget.yAxisMin
+          : undefined
+      this.maxY =
+        !this.widget.yAxisAuto && Number.isFinite(this.widget.yAxisMax)
+          ? this.widget.yAxisMax
+          : undefined
     },
     resizeChart() {
       if (!this.$refs.chartContainer) {

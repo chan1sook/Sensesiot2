@@ -1,6 +1,8 @@
 import Blockly from 'blockly'
 import { dateGroupcolor, logicGroupcolor, sensorGroupcolor } from './colors'
 
+import { truncate } from '~/utils/utils'
+
 // ------------ Base Event ------------
 Blockly.Blocks.condition_event = {
   init() {
@@ -37,9 +39,8 @@ Blockly.Blocks.read_sensor_data = {
           type: 'input_dummy',
         },
         {
-          type: 'field_input',
-          name: 'DEVICE_NAME',
-          text: '',
+          type: 'input_dummy',
+          name: 'DEVICE_DROPDOWN',
         },
         {
           type: 'field_number',
@@ -49,12 +50,12 @@ Blockly.Blocks.read_sensor_data = {
       ],
       inputsInline: false,
       output: 'Number',
-      message0: 'Read Sensor Data %1 Device %2 Slot %3',
+      message0: 'Read Sensor Data %1 Device Key %2 Slot %3',
       colour: sensorGroupcolor,
       tooltip: 'Read Sensor Data',
       helpUrl: '',
+      extensions: ['dynamic_device_extension'],
     })
-    // TODO generate dynamic device name
   },
 }
 
@@ -67,9 +68,8 @@ Blockly.Blocks.read_sensor_control_state = {
           type: 'input_dummy',
         },
         {
-          type: 'field_input',
-          name: 'DEVICE_NAME',
-          text: '',
+          type: 'input_dummy',
+          name: 'DEVICE_DROPDOWN',
         },
         {
           type: 'field_number',
@@ -79,12 +79,12 @@ Blockly.Blocks.read_sensor_control_state = {
       ],
       inputsInline: false,
       output: 'String',
-      message0: 'Read Control Sensor State %1 Device %2 Slot %3',
+      message0: 'Read Control Sensor State %1 Device Key %2 Slot %3',
       colour: sensorGroupcolor,
       tooltip: 'Read Control Sensor State',
       helpUrl: '',
+      extensions: ['dynamic_device_extension'],
     })
-    // TODO generate dynamic device name
   },
 }
 
@@ -97,25 +97,27 @@ Blockly.Blocks.control_sensor_push = {
           type: 'input_dummy',
         },
         {
-          type: 'field_input',
-          name: 'DEVICE_NAME',
-          text: '',
+          type: 'input_dummy',
+          name: 'DEVICE_DROPDOWN',
         },
         {
           type: 'field_number',
           name: 'SLOT',
           min: 1,
         },
+        {
+          type: 'input_dummy',
+        },
       ],
       inputsInline: false,
       previousStatement: null,
       nextStatement: null,
-      message0: 'Control Sensor %1 Device %2 Slot %3 %4 Push',
+      message0: 'Control Sensor %1 Device Key %2 Slot %3 %4 Push',
       colour: sensorGroupcolor,
       tooltip: 'Control Sensor Push',
       helpUrl: '',
+      extensions: ['dynamic_device_extension'],
     })
-    // TODO generate dynamic device name
   },
 }
 
@@ -128,9 +130,8 @@ Blockly.Blocks.control_sensor_toggle = {
           type: 'input_dummy',
         },
         {
-          type: 'field_input',
-          name: 'DEVICE_NAME',
-          text: '',
+          type: 'input_dummy',
+          name: 'DEVICE_DROPDOWN',
         },
         {
           type: 'field_number',
@@ -153,12 +154,12 @@ Blockly.Blocks.control_sensor_toggle = {
       inputsInline: false,
       previousStatement: null,
       nextStatement: null,
-      message0: 'Control Sensor %1 Device %2 Slot %3 %4 Switch To %5',
+      message0: 'Control Sensor %1 Device Key %2 Slot %3 %4 Switch To %5',
       colour: sensorGroupcolor,
       tooltip: 'Control Sensor Toggle Switch',
       helpUrl: '',
+      extensions: ['dynamic_device_extension'],
     })
-    // TODO generate dynamic device name
   },
 }
 
@@ -171,9 +172,8 @@ Blockly.Blocks.control_sensor_range = {
           type: 'input_dummy',
         },
         {
-          type: 'field_input',
-          name: 'DEVICE_NAME',
-          text: '',
+          type: 'input_dummy',
+          name: 'DEVICE_DROPDOWN',
         },
         {
           type: 'field_number',
@@ -192,12 +192,12 @@ Blockly.Blocks.control_sensor_range = {
       inputsInline: false,
       previousStatement: null,
       nextStatement: null,
-      message0: 'Control Sensor %1 Device %2 Slot %3 %4 Volume Slide To %5',
+      message0: 'Control Sensor %1 Device Key %2 Slot %3 %4 Volume Slide To %5',
       colour: sensorGroupcolor,
       tooltip: 'Control Sensor Volume',
       helpUrl: '',
+      extensions: ['dynamic_device_extension'],
     })
-    // TODO generate dynamic device name
   },
 }
 
@@ -363,3 +363,24 @@ Blockly.Blocks.widget_notify = {
     // TODO generate dynamic device name
   },
 }
+
+if (Blockly.Extensions.isRegistered('dynamic_device_extension')) {
+  Blockly.Extensions.unregister('dynamic_device_extension')
+}
+
+Blockly.Extensions.register('dynamic_device_extension', function () {
+  this.getInput('DEVICE_DROPDOWN').appendField(
+    new Blockly.FieldDropdown(function () {
+      if (!Array.isArray(Blockly._sensesiotDevices)) {
+        return []
+      }
+
+      return Blockly._sensesiotDevices.map((ele) => {
+        const deviceKey = truncate(ele.deviceKey)
+        const deviceName = ele.name ? `${ele.name} (${deviceKey})` : deviceKey
+        return [deviceName, ele.deviceKey]
+      })
+    }),
+    'DEVICE_KEY'
+  )
+})

@@ -29,7 +29,7 @@
       ></b-input>
       <b-input
         v-else-if="param.type === 'number'"
-        v-model="widgetData[param.field]"
+        v-model.number="widgetData[param.field]"
         :type="param.type"
         :required="param.required"
       ></b-input>
@@ -45,6 +45,29 @@
         :options="param.options"
         :required="param.required"
       >
+      </b-select>
+      <b-select
+        v-else-if="param.type === 'device'"
+        v-model="widgetData[param.field]"
+        :options="deviceOptions"
+        :required="param.required"
+      >
+        <b-form-select-option
+          v-if="devices.length === 0"
+          :value="null"
+          disabled
+        >
+          -- No Devices --
+        </b-form-select-option>
+        <b-form-select-option
+          v-else-if="
+            !devices.find((ele) => ele.deviceKey === widgetData[param.field])
+          "
+          :value="widgetData[param.field]"
+          disabled
+        >
+          -- Unknown Device --
+        </b-form-select-option>
       </b-select>
       <js-color
         v-else-if="param.type === 'color'"
@@ -96,6 +119,12 @@ export default {
         return {}
       },
     },
+    devices: {
+      type: Array,
+      default() {
+        return []
+      },
+    },
   },
   data() {
     return {
@@ -110,7 +139,20 @@ export default {
   },
   computed: {
     widgetParams() {
-      return getConfigableWidgetParams(this.widget.type)
+      return getConfigableWidgetParams(this.widget.type, {
+        devices: this.devices,
+      })
+    },
+    deviceOptions() {
+      return this.devices.map((ele) => {
+        const deviceName = ele.name
+          ? `${ele.name} (${ele.deviceKey})`
+          : ele.deviceKey
+        return {
+          text: deviceName,
+          value: ele.deviceKey,
+        }
+      })
     },
   },
   watch: {

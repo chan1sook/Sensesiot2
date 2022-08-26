@@ -1,11 +1,14 @@
 {
   "folders": [
-	{
-		"path": "sensesiot-ui"
-	},
-	{
-		"path": "sensesiot-api"
-	}
-],
+    {
+      "path": "sensesiot-ui"
+    },
+    {
+      "path": "sensesiot-api"
+    },
+    {
+      "path": "sensesiot-mqtt"
+    }
+  ],
   "settings": {}
 }

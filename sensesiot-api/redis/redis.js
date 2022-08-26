@@ -4,7 +4,6 @@ import { error, log } from "../utils/logging.js";
 function redisDefaultCallback() {
   log(`Connected`, { name: "Redis" });
 }
-
 export default function startRedisService(
   { callback = redisDefaultCallback } = { callback: redisDefaultCallback }
 ) {

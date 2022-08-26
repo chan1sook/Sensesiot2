@@ -87,6 +87,8 @@
         "
         :theme="theme"
         :editing="editMode"
+        :data-function="getWidgetData"
+        @pushControl="onPushControl"
         @change="onWidgetChange"
         @editWidget="onEditWidget"
         @removeWidget="onRemoveWidget"
@@ -127,6 +129,7 @@
     <config-sensesiot-widget-modal
       id="modal-edit-widget"
       :widget="editWidgetData"
+      :devices="devices"
       @ok="applyEditWidget"
     >
     </config-sensesiot-widget-modal>
@@ -143,11 +146,15 @@ import ShareLinkSensesiotDashboardModal from '~/components/modals/ShareLinkSense
 import AddSensesiotWidgetModal from '~/components/modals/AddSensesiotWidgetModal.vue'
 import ConfigSensesiotWidgetModal from '~/components/modals/ConfigSensesiotWidgetModal.vue'
 
+import SocketIOMixin from '~/mixins/socketio.js'
+
 import {
   getDefaultDashboardData,
   getThemeSetting,
   preditNextGridPosition,
   getDefaultWidgetData,
+  getWidgetData,
+  onSioMqtt,
 } from '~/utils/dashboard'
 
 export default {
@@ -160,6 +167,7 @@ export default {
     AddSensesiotWidgetModal,
     ConfigSensesiotWidgetModal,
   },
+  mixins: [SocketIOMixin],
   middleware: ['auth'],
   async asyncData({ $axios, store, error }) {
     try {
@@ -189,6 +197,9 @@ export default {
     return {
       selectedDashboardId: null,
       dashboards: [],
+      dashboardData: [],
+      dashboardDataId: 0,
+      devices: [],
       editMode: false,
       creditInfo: {},
       creditCosts: {},
@@ -239,12 +250,54 @@ export default {
       this.$store.dispatch('updateSensesiotPreferences', {
         lastOpenedDashboard: value,
       })
+
+      this.refreshDashboardData()
     },
   },
   mounted() {
     window.onbeforeunload = this.onBeforeUnload
+    this.refreshDashboardData()
+    this.socketio.on('mqtt', this.onSioMqtt)
+  },
+  beforeDestroy() {
+    this.socketio.off('mqtt')
   },
   methods: {
+    onSioMqtt(data) {
+      onSioMqtt(this.dashboardData, data)
+    },
+    async refreshDashboardData() {
+      if (this.selectedDashboardId) {
+        this.dashboardDataId += 1
+        const fetchId = this.dashboardDataId
+
+        const dashboardid = this.selectedDashboardId
+        const { dashboardData } = await this.$axios.$get(
+          `/api/sensesiot/dashboard-data/${dashboardid}`
+        )
+
+        if (
+          dashboardid === this.selectedDashboardId &&
+          fetchId === this.dashboardDataId
+        ) {
+          this.dashboardData = dashboardData
+        }
+      }
+    },
+    getWidgetData(widget) {
+      return getWidgetData(this.dashboardData, widget)
+    },
+    onPushControl(metadata) {
+      this.socketio.emit('controlDevice', {
+        deviceKey: metadata.controlDevice,
+        slot: metadata.controlSlot,
+        data: metadata.state,
+      })
+    },
+    async getDevices() {
+      const { devices } = await this.$axios.$get('/api/sensesiot/devices')
+      return devices
+    },
     async preditCredits(additionList = {}) {
       const { creditInfo, costs } = await this.$axios.$post(
         '/api/sensesiot/credits/predit',
@@ -310,8 +363,9 @@ export default {
         ...JSON.parse(JSON.stringify(dashboardData)),
       }
     },
-    showEditWidgetModal(widget) {
-      this.editWidgetData = widget
+    async showEditWidgetModal(widget) {
+      this.editWidgetData = JSON.parse(JSON.stringify(widget))
+      this.devices = await this.getDevices()
       this.$bvModal.show('modal-edit-widget')
     },
     applyEditWidget(widgetData) {
@@ -423,6 +477,8 @@ export default {
         this.editMode = false
 
         this.$store.dispatch('getUserData')
+
+        this.refreshDashboardData()
       } catch (err) {
         let message = err.message
         if (err.response) {

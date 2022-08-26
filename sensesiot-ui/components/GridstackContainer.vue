@@ -31,6 +31,7 @@
           :key="`widget-chart-${widget._id}`"
           :widget="widget"
           :theme="theme"
+          :value="dataFunction(widget)"
           :gridstack="gridstack"
           :editing="editing"
           @edit="editWidget"
@@ -121,9 +122,21 @@ export default {
     dataFunction: {
       type: Function,
       default(widget) {
+        let length
         switch (widget.type) {
           case 'gauge':
             return Math.round(Math.random() * 1000) / 1000
+          case 'chart':
+            length = Number.isInteger(this.widget.xAxisDuration)
+              ? Math.floor(this.widget.xAxisDuration / 60000)
+              : 15
+
+            return new Array(length).fill(undefined).map((ele, i) => {
+              return {
+                x: new Date(Date.now() + (i - length) * 60000),
+                y: Math.round(Math.random() * 100),
+              }
+            })
           case 'control':
             if (widget.controlType === 'toggle') {
               return Math.random() > 0.5 ? 'on' : 'off'
@@ -240,9 +253,8 @@ export default {
     removeWidget(id) {
       this.$emit('removeWidget', id)
     },
-    pushControl(metaData) {
-      console.log(metaData)
-      this.$forceUpdate()
+    pushControl(metadata) {
+      this.$emit('pushControl', metadata)
     },
   },
 }

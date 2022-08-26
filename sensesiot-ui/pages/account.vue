@@ -11,6 +11,7 @@
           <span>{{ userDisplayName }}</span>
         </div>
         <template v-if="$store.getters.role !== 'guest'">
+          <div class="my-2"><b>UID:</b> {{ authUser.uid }}</div>
           <div class="my-2"><b>Email:</b> {{ authUser.email }}</div>
           <div class="my-2"><b>Role:</b> {{ formatRole(authUser.role) }}</div>
           <div class="d-flex flex-row flex-wrap align-items-center my-2">

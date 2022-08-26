@@ -1,4 +1,8 @@
-import { conditionOptions, getDefaultConditionBlocks } from '../blockly/options'
+import dayjs from 'dayjs'
+import {
+  getConditionOptions,
+  getDefaultConditionBlocks,
+} from '../blockly/options'
 import { generateGradientObject } from './gradient'
 
 export const sensesiotThemeOptions = [
@@ -146,6 +150,8 @@ export function getDefaultWidgetData(type = 'label') {
         useThemeBgColor: true,
         labelColor: '#000000',
         useThemeLabelColor: true,
+        gaugeMin: 0,
+        gaugeMax: 100,
         dataDevice: '',
         dataSlot: 1,
       }
@@ -214,7 +220,12 @@ function getSupportMarkdownDescription(inline = false) {
   )
 }
 
-export function getConfigableWidgetParams(type = 'label') {
+export function getConfigableWidgetParams(
+  type = 'label',
+  { devices = [] } = {
+    devices: [],
+  }
+) {
   switch (type) {
     case 'label':
       return [
@@ -233,6 +244,22 @@ export function getConfigableWidgetParams(type = 'label') {
           label: 'Title',
           description: getSupportMarkdownDescription(true),
           type: 'text',
+        },
+        {
+          field: 'unit',
+          label: 'Unit',
+          description: 'Unit Label',
+          type: 'text',
+        },
+        {
+          field: 'gaugeMin',
+          label: 'Minimum Gauge Value',
+          type: 'number',
+        },
+        {
+          field: 'gaugeMax',
+          label: 'Maximum Gauge Value',
+          type: 'number',
         },
         {
           field: 'useThemeFgColor',
@@ -273,7 +300,7 @@ export function getConfigableWidgetParams(type = 'label') {
         {
           field: 'dataDevice',
           label: 'Select Device',
-          type: 'text',
+          type: 'device',
         },
         {
           field: 'dataSlot',
@@ -406,7 +433,7 @@ export function getConfigableWidgetParams(type = 'label') {
         {
           field: 'dataDevice',
           label: 'Select Device',
-          type: 'text',
+          type: 'device',
         },
         {
           field: 'dataSlot',
@@ -492,7 +519,7 @@ export function getConfigableWidgetParams(type = 'label') {
         {
           field: 'controlDevice',
           label: 'Select Device',
-          type: 'text',
+          type: 'device',
         },
         {
           field: 'controlSlot',
@@ -518,11 +545,117 @@ export function getConfigableWidgetParams(type = 'label') {
           field: 'condition',
           label: 'Condition (WIP.)',
           type: 'blockly',
-          options: conditionOptions,
+          options: getConditionOptions(devices),
         },
       ]
     default:
       return []
+  }
+}
+
+function findWidgetData(dashboardData, widget, fetchType) {
+  return dashboardData.find(
+    (ele) =>
+      ele.fetchType === fetchType &&
+      ele.deviceKey === widget.dataDevice &&
+      ele.slot === `${widget.dataSlot}`
+  )
+}
+function findWidgetControlData(dashboardData, widget, fetchType) {
+  return dashboardData.find(
+    (ele) =>
+      ele.fetchType === fetchType &&
+      ele.deviceKey === widget.controlDevice &&
+      ele.slot === `${widget.controlSlot}`
+  )
+}
+
+export function getWidgetData(dashboardData, widget) {
+  let targetData
+  switch (widget.type) {
+    case 'gauge':
+      targetData = findWidgetData(dashboardData, widget, 'data1')
+      if (
+        targetData &&
+        Array.isArray(targetData.data) &&
+        targetData.data.length > 0
+      ) {
+        targetData = targetData.data[targetData.data.length - 1]
+        if (dayjs().diff(targetData.ts, 'minutes') <= 15) {
+          return targetData.metadata.data
+        }
+      }
+      return null
+    case 'chart':
+      targetData = findWidgetData(dashboardData, widget, 'data+')
+      if (targetData && Array.isArray(targetData.data)) {
+        return targetData.data.map((ele) => {
+          return {
+            x: dayjs(ele.ts).toDate(),
+            y: ele.metadata.data,
+          }
+        })
+      }
+      break
+    case 'control':
+      targetData = findWidgetControlData(dashboardData, widget, 'control1')
+      if (
+        targetData &&
+        Array.isArray(targetData.data) &&
+        targetData.data.length > 0
+      ) {
+        return targetData.data[targetData.data.length - 1].metadata.data
+      }
+      break
+    default:
+  }
+}
+
+export function onSioMqtt(dashboardData, data) {
+  for (const fetchData of dashboardData) {
+    if (
+      fetchData.deviceKey === data.deviceKey &&
+      fetchData.slot === `${data.slot}`
+    ) {
+      switch (fetchData.fetchType) {
+        case 'data1':
+          if (data.type === 'dataApi') {
+            fetchData.data.splice(0, fetchData.data.length, {
+              metadata: {
+                data: parseFloat(data.data),
+              },
+              deviceKey: data.deviceKey,
+              slot: data.slot,
+              ts: dayjs().toISOString(),
+            })
+          }
+          break
+        case 'data+':
+          if (data.type === 'dataApi') {
+            fetchData.data.push({
+              metadata: {
+                data: parseFloat(data.data),
+              },
+              deviceKey: data.deviceKey,
+              slot: data.slot,
+              ts: dayjs().toISOString(),
+            })
+          }
+          break
+        case 'control1':
+          if (data.type === 'controlApi') {
+            fetchData.data.splice(0, fetchData.data.length, {
+              metadata: {
+                data: data.data,
+              },
+              deviceKey: data.deviceKey,
+              slot: data.slot,
+              ts: dayjs().toISOString(),
+            })
+          }
+          break
+      }
+    }
   }
 }
 
@@ -534,4 +667,6 @@ export default Object.freeze({
   widgetsDescription,
   getDefaultWidgetData,
   getConfigableWidgetParams,
+  getWidgetData,
+  onSioMqtt,
 })

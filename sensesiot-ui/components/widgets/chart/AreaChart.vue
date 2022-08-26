@@ -23,6 +23,7 @@ import {
   LineElement,
   PointElement,
   LinearScale,
+  TimeScale,
   TimeSeriesScale,
 } from 'chart.js'
 import 'chartjs-adapter-date-fns'
@@ -35,6 +36,7 @@ ChartJS.register(
   LineElement,
   PointElement,
   LinearScale,
+  TimeScale,
   TimeSeriesScale
 )
 

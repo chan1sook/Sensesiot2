@@ -1,3 +1,5 @@
+import Blockly from 'blockly'
+
 import '~/blockly/toolbox'
 import '~/blockly/blocks'
 import { dateGroupcolor, sensorGroupcolor } from './colors'
@@ -485,33 +487,37 @@ const alarmCategory = {
   ],
 }
 
-export const conditionOptions = {
-  toolbox: {
-    kind: 'categoryToolbox',
-    contents: [
-      sensorCategory,
-      datetimeCategory,
-      logicCategory,
-      mathCategory,
-      textCategory,
-      alarmCategory,
-      {
-        kind: 'sep',
-      },
-      {
-        kind: 'category',
-        name: 'Variables',
-        categorystyle: 'variable_category',
-        custom: 'VARIABLE',
-      },
-      {
-        kind: 'category',
-        name: 'Functions',
-        categorystyle: 'procedure_category',
-        custom: 'PROCEDURE',
-      },
-    ],
-  },
+export function getConditionOptions(devices = []) {
+  Blockly._sensesiotDevices = devices
+
+  return {
+    toolbox: {
+      kind: 'categoryToolbox',
+      contents: [
+        sensorCategory,
+        datetimeCategory,
+        logicCategory,
+        mathCategory,
+        textCategory,
+        alarmCategory,
+        {
+          kind: 'sep',
+        },
+        {
+          kind: 'category',
+          name: 'Variables',
+          categorystyle: 'variable_category',
+          custom: 'VARIABLE',
+        },
+        {
+          kind: 'category',
+          name: 'Functions',
+          categorystyle: 'procedure_category',
+          custom: 'PROCEDURE',
+        },
+      ],
+    },
+  }
 }
 
 export function getDefaultConditionBlocks() {
@@ -524,6 +530,6 @@ export function getDefaultConditionBlocks() {
 }
 
 export default Object.freeze({
-  conditionOptions,
+  getConditionOptions,
   getDefaultConditionBlocks,
 })

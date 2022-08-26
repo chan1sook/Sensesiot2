@@ -2,6 +2,13 @@ import { ObjectId } from "mongodb";
 import { sensesiotV2 } from "../../database/mongodb.js";
 import { preditNewCredit, preditReplaceWidgetsCredit } from "./credits.js";
 
+export async function getAllSensesiotDashboards() {
+  const dashboardCol = sensesiotV2.collection("dashboards");
+
+  const dashboards = await dashboardCol.find({}).toArray();
+  return dashboards;
+}
+
 export async function getSensesiotDashboardsByUser(uid) {
   const dashboardCol = sensesiotV2.collection("dashboards");
 
@@ -106,6 +113,7 @@ export function removeSensesiotDashboard(uid, dashboardId) {
 }
 
 export default Object.freeze({
+  getAllSensesiotDashboards,
   getSensesiotDashboardsByUser,
   getSensesiotDashboardById,
   createSensesiotDashboard,
