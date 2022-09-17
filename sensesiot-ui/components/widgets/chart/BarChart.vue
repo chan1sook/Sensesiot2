@@ -1,5 +1,5 @@
 <template>
-  <Bar
+  <BarChartComponent
     :chart-options="chartOptions"
     :chart-data="chartData"
     :chart-id="chartId"
@@ -38,7 +38,7 @@ ChartJS.register(
 
 export default {
   name: 'BarChart',
-  components: { Bar },
+  components: { BarChartComponent: Bar },
   props: {
     chartData: {
       type: Object,

@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { sensesiotThemeOptions } from '~/utils/dashboard'
+import { sensesiotThemeOptions } from '~/utils/theme'
 export default {
   name: 'EditSensesiotDashboardModal',
   props: {

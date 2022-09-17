@@ -69,7 +69,7 @@ import BarChart from './chart/BarChart.vue'
 import LineChart from './chart/LineChart.vue'
 import AreaChart from './chart/AreaChart.vue'
 
-import { getThemeSetting } from '~/utils/dashboard'
+import { getThemeSetting } from '~/utils/theme'
 import { getColorIfValid } from '~/utils/gradient'
 
 export default {
@@ -177,24 +177,6 @@ export default {
             },
           },
         },
-      }
-    },
-    limitX() {
-      return {
-        min: Date.now() - (this.widget.xAxisDuration || 15 * 60 * 1000),
-        max: Date.now(),
-      }
-    },
-    limitY() {
-      return {
-        min:
-          !this.widget.yAxisAuto && Number.isFinite(this.widget.yAxisMin)
-            ? this.widget.yAxisMin
-            : undefined,
-        max:
-          !this.widget.yAxisAuto && Number.isFinite(this.widget.yAxisMax)
-            ? this.widget.yAxisMax
-            : undefined,
       }
     },
   },

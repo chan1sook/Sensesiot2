@@ -1,5 +1,5 @@
 <template>
-  <LineC
+  <LineChartComponent
     :chart-options="chartOptions"
     :chart-data="chartData"
     :chart-id="chartId"
@@ -42,7 +42,7 @@ ChartJS.register(
 
 export default {
   name: 'LineChart',
-  components: { LineC: Line },
+  components: { LineChartComponent: Line },
   props: {
     chartData: {
       type: Object,

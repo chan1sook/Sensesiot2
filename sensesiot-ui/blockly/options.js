@@ -31,6 +31,13 @@ const sensorCategory = {
     {
       kind: 'block',
       type: 'control_sensor_range',
+      inputs: {
+        VALUE: {
+          shadow: {
+            type: 'math_number',
+          },
+        },
+      },
     },
   ],
 }
@@ -361,10 +368,7 @@ const textCategory = {
       inputs: {
         VALUE: {
           shadow: {
-            type: 'variables_get',
-            fields: {
-              VAR: 'text',
-            },
+            type: 'text',
           },
         },
         FIND: {
@@ -391,10 +395,7 @@ const textCategory = {
       inputs: {
         STRING: {
           shadow: {
-            type: 'variables_get',
-            fields: {
-              VAR: 'text',
-            },
+            type: 'text',
           },
         },
       },

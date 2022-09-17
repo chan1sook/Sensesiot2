@@ -31,8 +31,20 @@
         v-else-if="param.type === 'number'"
         v-model.number="widgetData[param.field]"
         :type="param.type"
+        :min="param.min"
+        :max="param.max"
         :required="param.required"
       ></b-input>
+      <template v-else-if="param.type === 'date'">
+        <b-datepicker
+          :value="new Date(widgetData[param.field])"
+          value-as-date
+          :type="param.type"
+          :required="param.required"
+          @input="handleDateInput(param.field, $event)"
+        ></b-datepicker>
+        <div>Value: {{ widgetData[param.field] }}</div>
+      </template>
       <b-textarea
         v-else-if="param.type === 'textarea'"
         v-model="widgetData[param.field]"
@@ -119,6 +131,10 @@ export default {
         return {}
       },
     },
+    widgetParamsFn: {
+      type: Function,
+      default: getConfigableWidgetParams,
+    },
     devices: {
       type: Array,
       default() {
@@ -139,7 +155,7 @@ export default {
   },
   computed: {
     widgetParams() {
-      return getConfigableWidgetParams(this.widget.type, {
+      return this.widgetParamsFn(this.widget.type, {
         devices: this.devices,
       })
     },
@@ -164,13 +180,42 @@ export default {
     },
   },
   methods: {
+    handleDateInput(field, value) {
+      if (value instanceof Date) {
+        this.widgetData[field] = value.getTime()
+      }
+    },
     isShowParam(param) {
-      if (!param.hideIfFieldTrue) {
-        return true
+      let result = true
+
+      if (Array.isArray(param.showIfFieldOp)) {
+        const [field, op, value] = param.showIfFieldOp
+        switch (op) {
+          case '===':
+            result = result && this.widgetData[field] === value
+            break
+          case '>=':
+            result = result && this.widgetData[field] >= value
+            break
+          case '>':
+            result = result && this.widgetData[field] > value
+            break
+          case '<':
+            result = result && this.widgetData[field] < value
+            break
+          case '<=':
+            result = result && this.widgetData[field] <= value
+            break
+          default:
+            result = result && false
+        }
       }
 
-      const hideIfFieldTrue = Boolean(this.widgetData[param.hideIfFieldTrue])
-      return !hideIfFieldTrue
+      if (typeof param.hideIfFieldTrue !== 'undefined') {
+        result = result && !this.widgetData[param.hideIfFieldTrue]
+      }
+
+      return result
     },
     onOk() {
       this.$emit('ok', JSON.parse(JSON.stringify(this.widgetData)))

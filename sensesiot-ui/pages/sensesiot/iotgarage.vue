@@ -2,7 +2,10 @@
   <sensesiot-base-container>
     <b-container class="mt-4 d-flex flex-column" style="flex-grow: 1">
       <sensesiot-content-container>
-        <h4 class="text-center">IoT Garage</h4>
+        <h2 class="text-center">
+          <font-awesome-icon :icon="['fas', 'fa-microchip']" fixed-width />
+          IoT Garage
+        </h2>
         <h5>Devices</h5>
         <b-button-toolbar style="gap: 0.5em">
           <b-input-group prepend="Search">
@@ -89,6 +92,7 @@ import EditSensesiotDeviceModal from '~/components/modals/EditSensesiotDeviceMod
 import DeleteSensesiotDeviceModal from '~/components/modals/DeleteSensesiotDeviceModal.vue'
 
 import { getDefaultDeviceData } from '~/utils/device'
+import { preditCredits } from '~/utils/utils'
 
 export default {
   name: 'IotGaragePage',
@@ -149,12 +153,8 @@ export default {
     },
   },
   methods: {
-    async preditCredits(additionList = {}) {
-      const { creditInfo, costs } = await this.$axios.$post(
-        '/api/sensesiot/credits/predit',
-        additionList
-      )
-      return { creditInfo, costs }
+    preditCredits(additionList = {}) {
+      return preditCredits(this.$axios, additionList)
     },
     async showCreateDeviceModal() {
       const { creditInfo } = await this.preditCredits({ device: 1 })

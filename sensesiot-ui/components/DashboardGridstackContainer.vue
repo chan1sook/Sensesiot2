@@ -57,7 +57,6 @@
           :key="`widget-condition-${widget._id}`"
           :widget="widget"
           :theme="theme"
-          :status="conditionStatusFunction(widget)"
           :gridstack="gridstack"
           :editing="editing"
           @edit="editWidget"
@@ -81,7 +80,6 @@
 
 <script>
 import 'gridstack/dist/gridstack.min.css'
-import { GridStack } from 'gridstack'
 
 import DefaultSensesiotWidget from '~/components/widgets/DefaultSensesiotWidget.vue'
 import GaugeSensesiotWidget from '~/components/widgets/GaugeSensesiotWidget.vue'
@@ -91,7 +89,7 @@ import ControlSensesiotWidget from '~/components/widgets/ControlSensesiotWidget.
 import ConditionSensesiotWidget from '~/components/widgets/ConditionSensesiotWidget.vue'
 
 export default {
-  name: 'GridstackContainer',
+  name: 'DashboardGridstackContainer',
   components: {
     DefaultSensesiotWidget,
     GaugeSensesiotWidget,
@@ -147,19 +145,6 @@ export default {
         }
       },
     },
-    conditionStatusFunction: {
-      type: Function,
-      default(widget) {
-        return {
-          active: widget.active || false,
-          lastCheck: new Date(),
-          status: widget.active ? 'OK' : 'Disabled',
-          message: widget.active
-            ? 'WIP. No Actual Alarm Trigged'
-            : 'Please Active Widget',
-        }
-      },
-    },
   },
   data() {
     return {
@@ -177,18 +162,18 @@ export default {
       }
 
       this.$nextTick(() => {
-        this.initGridstack()
+        const { GridStack } = require('gridstack')
+        this.initGridstack(GridStack)
       })
     },
   },
   mounted() {
-    require('gridstack/dist/h5/gridstack-dd-native')
-
+    const { GridStack } = require('gridstack')
     this.id = setInterval(() => {
       this.$forceUpdate()
     }, 10000)
 
-    this.initGridstack()
+    this.initGridstack(GridStack)
   },
   beforeDestroy() {
     clearInterval(this.id)
@@ -199,7 +184,7 @@ export default {
     this.ready = false
   },
   methods: {
-    initGridstack() {
+    initGridstack(GridStack) {
       this.gridstack = GridStack.init(
         { float: true, oneColumnSize: 600, oneColumnModeDomSort: true },
         this.$refs.gridstack

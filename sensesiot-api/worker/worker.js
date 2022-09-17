@@ -20,7 +20,7 @@ export default async function startWorkerService(
     redisClient: createClient(),
   }
 ) {
-  const queue = await initMainRoutineQueue();
+  const queue = await initMainRoutineQueue({ eventEmitter, redisClient });
   queue.add({}, { jobId: "1", repeat: { cron: "* * * * *" } });
   callback();
 }

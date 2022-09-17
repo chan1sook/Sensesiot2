@@ -24,6 +24,62 @@ function findFetchDataOf({ fetchType, deviceKey, slot }, fetchLists = []) {
   );
 }
 
+export function fetchSensesiotDataByFetchDataOf({
+  fetchType,
+  deviceKey,
+  slot,
+  anchorToday = Date.now(),
+}) {
+  const dataCol = sensesiotV2.collection("data");
+  const controlCol = sensesiotV2.collection("control");
+  switch (fetchType) {
+    case "data1":
+      return dataCol
+        .find(
+          {
+            deviceKey,
+            slot,
+            ts: {
+              $lte: new Date(anchorToday),
+            },
+          },
+          { limit: 1, sort: { ts: -1 } }
+        )
+        .toArray();
+    case "data+":
+      return dataCol
+        .find(
+          {
+            deviceKey,
+            slot,
+            ts: {
+              $gte: new Date(anchorToday - 60 * 60 * 1000),
+              $lte: new Date(anchorToday),
+            },
+          },
+          { sort: { ts: 1 } }
+        )
+        .toArray();
+    case "control1":
+      return controlCol
+        .find(
+          {
+            deviceKey,
+            slot,
+            ts: {
+              $lte: new Date(anchorToday),
+            },
+          },
+          { limit: 1, sort: { ts: -1 } }
+        )
+        .toArray();
+    default:
+      return new Promise((resolve) => {
+        resolve([]);
+      });
+  }
+}
+
 export async function fetchSensesiotDataByWidgets(widgets = []) {
   const queryPLimit = pLimit(20);
   const fetchLists = [];
@@ -53,67 +109,9 @@ export async function fetchSensesiotDataByWidgets(widgets = []) {
     }
   }
 
-  const dbPromises = [];
-
-  const dataCol = sensesiotV2.collection("data");
-  const controlCol = sensesiotV2.collection("control");
-
-  for (let i = 0; i < fetchLists.length; i += 1) {
-    const fetchObj = fetchLists[i];
-    switch (fetchObj.fetchType) {
-      case "data1":
-        dbPromises.push(
-          dataCol
-            .find(
-              {
-                deviceKey: fetchObj.deviceKey,
-                slot: fetchObj.slot,
-                ts: {
-                  $lte: new Date(anchorToday),
-                },
-              },
-              { limit: 1, sort: { ts: -1 } }
-            )
-            .toArray()
-        );
-        break;
-      case "data+":
-        dbPromises.push(
-          dataCol
-            .find(
-              {
-                deviceKey: fetchObj.deviceKey,
-                slot: fetchObj.slot,
-                ts: {
-                  $gte: new Date(anchorToday - 60 * 60 * 1000),
-                  $lte: new Date(anchorToday),
-                },
-              },
-              { sort: { ts: 1 } }
-            )
-            .toArray()
-        );
-        break;
-      case "control1":
-        dbPromises.push(
-          controlCol
-            .find(
-              {
-                deviceKey: fetchObj.deviceKey,
-                slot: fetchObj.slot,
-                ts: {
-                  $lte: new Date(anchorToday),
-                },
-              },
-              { limit: 1, sort: { ts: -1 } }
-            )
-            .toArray()
-        );
-        break;
-      default:
-        break;
-    }
-  }
+  const dbPromises = fetchLists.map((ele) =>
+    fetchSensesiotDataByFetchDataOf(ele)
+  );
 
   const results = await Promise.all(
     dbPromises.map((ele) => queryPLimit(() => ele))
@@ -129,4 +127,5 @@ export async function fetchSensesiotDataByWidgets(widgets = []) {
 
 export default Object.freeze({
   fetchSensesiotDataByWidgets,
+  fetchSensesiotDataByFetchDataOf,
 });

@@ -116,7 +116,9 @@ export default {
   methods: {
     creditCostOf(type) {
       return (
-        this.creditCosts.widget[type] || this.creditCosts.widget.others || 0
+        this.creditcosts.dashboardWidget[type] ||
+        this.creditcosts.dashboardWidget.others ||
+        0
       )
     },
     creditRemain(type, { predit, max } = {}) {

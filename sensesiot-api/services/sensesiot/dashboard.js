@@ -1,6 +1,10 @@
+/* eslint-disable no-underscore-dangle */
 import { ObjectId } from "mongodb";
 import { sensesiotV2 } from "../../database/mongodb.js";
-import { preditNewCredit, preditReplaceWidgetsCredit } from "./credits.js";
+import {
+  preditNewCredit,
+  preditReplaceDashboardWidgetsCredit,
+} from "./credits.js";
 
 export async function getAllSensesiotDashboards() {
   const dashboardCol = sensesiotV2.collection("dashboards");
@@ -29,14 +33,7 @@ export async function getSensesiotDashboardById(dashboardId) {
 
 export async function createSensesiotDashboard(
   uid,
-  {
-    name = "",
-    theme,
-    options = {
-      publicAccess: false,
-    },
-    widgets = [],
-  }
+  { name = "", theme = "default", publicAccess = false, widgets = [] }
 ) {
   const { max: maxCredits, predit: preditCredits } = await preditNewCredit(
     uid,
@@ -53,7 +50,7 @@ export async function createSensesiotDashboard(
     name,
     widgets,
     theme,
-    options,
+    publicAccess,
     createTime: new Date(),
     lastestUpdateTime: new Date(),
   };
@@ -79,7 +76,7 @@ export async function updateSensesiotDashboard(uid, dashboardId, data) {
   }, {});
 
   const { max: maxCredits, predit: preditCredits } =
-    await preditReplaceWidgetsCredit(uid, dashboardId, widgetsLength);
+    await preditReplaceDashboardWidgetsCredit(uid, dashboardId, widgetsLength);
 
   if (preditCredits > maxCredits) {
     throw new Error("Credits not enough");
@@ -104,6 +101,29 @@ export async function updateSensesiotDashboard(uid, dashboardId, data) {
   return value;
 }
 
+export async function updateSensesiotWidgetData(uid, data, updatedData) {
+  const dashboardCol = sensesiotV2.collection("dashboards");
+
+  const targetDashboard = await dashboardCol.findOne({
+    uid,
+    "widgets._id": data._id,
+  });
+
+  if (!targetDashboard) {
+    throw new Error("No Dashboard Found");
+  }
+
+  const { widgets } = targetDashboard;
+  const targetWidget = widgets.find((ele) => ele._id === data._id);
+
+  if (targetWidget) {
+    Object.assign(targetWidget, updatedData);
+    await updateSensesiotDashboard(uid, targetDashboard._id, {
+      widgets,
+    });
+  }
+}
+
 export function removeSensesiotDashboard(uid, dashboardId) {
   const dashboardCol = sensesiotV2.collection("dashboards");
   return dashboardCol.findOneAndDelete({
@@ -118,5 +138,6 @@ export default Object.freeze({
   getSensesiotDashboardById,
   createSensesiotDashboard,
   updateSensesiotDashboard,
+  updateSensesiotWidgetData,
   removeSensesiotDashboard,
 });

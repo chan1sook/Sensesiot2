@@ -4,9 +4,11 @@ import WebError from "../../../utils/weberror.js";
 import { error } from "../../../utils/logging.js";
 import {
   dashboardCreditCost,
-  widgetCreditCost,
+  dashboardWidgetCost,
   deviceCreditCost,
   preditNewCredit,
+  reportCreditCost,
+  reportWidgetCost,
 } from "../../../services/sensesiot/credits.js";
 
 const router = Router();
@@ -34,8 +36,10 @@ router.post("/credits/predit", json(), async (req, res) => {
       creditInfo,
       costs: {
         dashboard: dashboardCreditCost,
-        widget: widgetCreditCost,
+        dashboardWidget: dashboardWidgetCost,
         device: deviceCreditCost,
+        report: reportCreditCost,
+        reportWidget: reportWidgetCost,
       },
     });
   } catch (err) {

@@ -1,19 +1,9 @@
 /* eslint-disable no-underscore-dangle */
-import EventEmitter from "events";
-
-import { createClient } from "redis";
-
 import { error, log } from "../../utils/logging.js";
 import { dashboardQueue, widgetQueue } from "../queue.js";
 
 export default async function initProcessDashboardQueue(
-  {
-    eventEmitter = new EventEmitter(),
-    redisClient = createClient(),
-    reset = false,
-  } = {
-    eventEmitter: new EventEmitter(),
-    redisClient: createClient(),
+  { reset = false } = {
     reset: false,
   }
 ) {
@@ -49,10 +39,13 @@ export default async function initProcessDashboardQueue(
       for (let i = 0; i < dashboardData.widgets.length; i += 1) {
         const widget = dashboardData.widgets[i];
         if (widget.type === "condition") {
-          widgetQueue.add(widget, {
-            removeOnComplete: true,
-            removeOnFail: true,
-          });
+          widgetQueue.add(
+            { ...widget, userUid: dashboardData.uid },
+            {
+              removeOnComplete: true,
+              removeOnFail: true,
+            }
+          );
         }
 
         job.progress(((i + 1) * 100) / (dashboardData.widgets.length + 1));

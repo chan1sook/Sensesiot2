@@ -1,7 +1,7 @@
 <template>
   <div
     ref="widget"
-    class="grid-stack-item pr-2 pb-2"
+    class="grid-stack-item grid-stack-item-content pr-2 pb-2"
     v-bind="gridStackAttributes"
     @mouseover="show = true"
     @mouseout="show = false"

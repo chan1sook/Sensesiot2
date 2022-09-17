@@ -1,4 +1,6 @@
+import dayjs from "dayjs";
 import { Decimal128 } from "mongodb";
+import { createASAP } from "downsample";
 
 export function convertDecimal128ToString(doc) {
   const keys = Object.keys(doc);
@@ -16,6 +18,18 @@ export function convertDecimal128ToString(doc) {
   return result;
 }
 
+export const ASAPFn = createASAP({
+  x: (data) => dayjs(data.ts).valueOf(),
+  y: (data) => data.metadata.data,
+  toPoint: (x, y) => ({
+    ts: dayjs(x).toDate(),
+    metadata: {
+      data: y,
+    },
+  }),
+});
+
 export default Object.freeze({
   convertDecimal128ToString,
+  ASAPFn,
 });

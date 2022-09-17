@@ -1,19 +1,13 @@
 /* eslint-disable no-underscore-dangle */
 import EventEmitter from "events";
 
-import { createClient } from "redis";
-import interpreteConditionBlockly from "../../utils/condition-interpreter.js";
+import interpreteConditionBlockly from "../interpreter/interprete.js";
 import { log, error } from "../../utils/logging.js";
 import { widgetQueue } from "../queue.js";
 
 export default async function initProcessWidgetQueue(
-  {
-    eventEmitter = new EventEmitter(),
-    redisClient = createClient(),
-    reset = false,
-  } = {
+  { eventEmitter = new EventEmitter(), reset = false } = {
     eventEmitter: new EventEmitter(),
-    redisClient: createClient(),
     reset: false,
   }
 ) {
@@ -43,7 +37,11 @@ export default async function initProcessWidgetQueue(
 
       switch (widgetData.type) {
         case "condition":
-          await interpreteConditionBlockly(widgetData.condition);
+          await interpreteConditionBlockly({
+            condition: widgetData.condition,
+            widgetData,
+            eventEmitter,
+          });
           break;
         default:
           break;

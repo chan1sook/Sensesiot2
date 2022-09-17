@@ -41,9 +41,7 @@ export default {
     gridstack: {
       type: Object,
       default: () => {
-        return {
-          lastest: [],
-        }
+        return {}
       },
     },
     editing: {

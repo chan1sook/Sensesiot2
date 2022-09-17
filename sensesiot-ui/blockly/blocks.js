@@ -147,7 +147,7 @@ Blockly.Blocks.control_sensor_toggle = {
           options: [
             ['On', 'ON'],
             ['Off', 'OFF'],
-            ['Toogle', 'TOGGLE'],
+            ['Toggle', 'TOGGLE'],
           ],
         },
       ],
@@ -277,10 +277,10 @@ Blockly.Blocks.datetime_equals = {
         },
         {
           type: 'field_dropdown',
-          name: 'OPS',
+          name: 'OP',
           options: [
-            ['Equal Datetime', 'EQUAL_DATETIME'],
-            ['Equal Time', 'EQUAL_TIMES'],
+            ['Equal Datetime', 'EQDATETIME'],
+            ['Equal Time', 'EQTIME'],
           ],
         },
         {

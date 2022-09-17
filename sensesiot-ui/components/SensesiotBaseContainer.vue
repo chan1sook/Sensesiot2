@@ -17,10 +17,20 @@
               <b-dropdown-item href="/sensesiot/iotgarage">
                 IoT Garage
               </b-dropdown-item>
-              <b-dropdown-item disabled> Report </b-dropdown-item>
+              <b-dropdown-item href="/sensesiot/report">
+                Report
+              </b-dropdown-item>
               <b-dropdown-divider></b-dropdown-divider>
               <b-dropdown-item href="/sensesiot/shop"> Shops </b-dropdown-item>
             </b-nav-item-dropdown>
+            <template v-if="isDev">
+              <b-nav-item-dropdown right>
+                <template #button-content> Dev Menu </template>
+                <b-dropdown-item href="/admin/redeem-code">
+                  Redeem Code
+                </b-dropdown-item>
+              </b-nav-item-dropdown>
+            </template>
             <b-nav-item-dropdown right>
               <template #button-content>
                 <b-avatar
@@ -69,6 +79,7 @@
               <b-dropdown-item variant="sucessful" href="/shop">
                 Buy More
               </b-dropdown-item>
+              <b-dropdown-item href="/redeem"> Redeem Code </b-dropdown-item>
               <b-dropdown-divider></b-dropdown-divider>
               <b-dropdown-item href="/account"> Account Info </b-dropdown-item>
               <b-overlay :show="logoutLoading">
@@ -98,6 +109,9 @@ export default {
   computed: {
     isLogin() {
       return this.$store.getters.role !== 'guest'
+    },
+    isDev() {
+      return this.$store.getters.role === 'developer'
     },
     authUser() {
       return this.$store.state.authUser

@@ -59,7 +59,7 @@
               <font-awesome-icon :icon="['fas', 'save']" fixed-width />
               <span class="d-none d-lg-inline">Save</span>
             </b-button>
-            <b-button variant="secondary" @click="editMode = false">
+            <b-button variant="secondary" @click="confirmCancel">
               <font-awesome-icon :icon="['fas', 'history']" fixed-width />
               <span class="d-none d-lg-inline">Cancel</span>
             </b-button>
@@ -76,7 +76,7 @@
           <span class="d-none d-lg-inline"> Share</span>
         </b-button>
       </b-button-toolbar>
-      <gridstack-container
+      <dashboard-gridstack-container
         style="margin-top: 3em"
         :widgets="
           editMode
@@ -92,7 +92,7 @@
         @change="onWidgetChange"
         @editWidget="onEditWidget"
         @removeWidget="onRemoveWidget"
-      ></gridstack-container>
+      ></dashboard-gridstack-container>
     </div>
     <create-sensesiot-dashboard-modal
       id="modal-create-dashboard"
@@ -150,12 +150,14 @@ import SocketIOMixin from '~/mixins/socketio.js'
 
 import {
   getDefaultDashboardData,
-  getThemeSetting,
   preditNextGridPosition,
   getDefaultWidgetData,
   getWidgetData,
   onSioMqtt,
+  onUpdateWidget,
 } from '~/utils/dashboard'
+import { getThemeSetting } from '~/utils/theme'
+import { preditCredits } from '~/utils/utils'
 
 export default {
   name: 'DashboardPage',
@@ -255,16 +257,24 @@ export default {
     },
   },
   mounted() {
-    window.onbeforeunload = this.onBeforeUnload
+    window.addEventListener('beforeunload', this.onBeforeUnload)
     this.refreshDashboardData()
     this.socketio.on('mqtt', this.onSioMqtt)
+    this.socketio.on('updateWidget', this.onUpdateWidget)
   },
   beforeDestroy() {
+    window.removeEventListener('beforeunload', this.onBeforeUnload)
     this.socketio.off('mqtt')
+    this.socketio.off('updateWidget')
   },
   methods: {
     onSioMqtt(data) {
       onSioMqtt(this.dashboardData, data)
+    },
+    onUpdateWidget(data) {
+      onUpdateWidget(this.dashboards, data)
+
+      this.$forceUpdate()
     },
     async refreshDashboardData() {
       if (this.selectedDashboardId) {
@@ -298,12 +308,8 @@ export default {
       const { devices } = await this.$axios.$get('/api/sensesiot/devices')
       return devices
     },
-    async preditCredits(additionList = {}) {
-      const { creditInfo, costs } = await this.$axios.$post(
-        '/api/sensesiot/credits/predit',
-        additionList
-      )
-      return { creditInfo, costs }
+    preditCredits(additionList = {}) {
+      return preditCredits(this.$axios, additionList)
     },
     async showCreateDashboardModal() {
       const { creditInfo } = await this.preditCredits({ dashboard: 1 })
@@ -439,9 +445,6 @@ export default {
 
       this.editDashboardData.widgets.push(newWidgetData)
     },
-    exitEditMode() {
-      this.editMode = false
-    },
     async editDashboard() {
       if (
         !this.editMode ||
@@ -564,6 +567,23 @@ export default {
         ...JSON.parse(JSON.stringify(this.selectedDashboard)),
       }
       this.$bvModal.show('modal-share-link-dashboard')
+    },
+    async confirmCancel() {
+      const msgBoxResult = await this.$bvModal.msgBoxConfirm(
+        'Do you want to cancel editing?',
+        {
+          title: 'Confirm',
+          okVariant: 'danger',
+          okTitle: 'Yes',
+          cancelTitle: 'No',
+          hideHeaderClose: false,
+          centered: true,
+        }
+      )
+
+      if (msgBoxResult === true) {
+        this.editMode = false
+      }
     },
     onBeforeUnload(ev) {
       if (this.editMode) {

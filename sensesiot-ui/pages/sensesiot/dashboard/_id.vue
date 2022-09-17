@@ -19,13 +19,13 @@
           <span class="d-none d-lg-inline"> Share</span>
         </b-button>
       </b-button-toolbar>
-      <gridstack-container
+      <dashboard-gridstack-container
         style="margin-top: 3em"
         :widgets="dashboard.widgets"
         :data-function="getWidgetData"
         :theme="theme"
         no-control
-      ></gridstack-container>
+      ></dashboard-gridstack-container>
     </div>
     <share-link-sensesiot-dashboard-modal
       id="modal-share-link-dashboard"
@@ -36,10 +36,11 @@
 </template>
 
 <script>
-import { getThemeSetting, getWidgetData, onSioMqtt } from '~/utils/dashboard'
+import { getWidgetData, onSioMqtt, onUpdateWidget } from '~/utils/dashboard'
 import SocketIOMixin from '~/mixins/socketio.js'
 
 import ShareLinkSensesiotDashboardModal from '~/components/modals/ShareLinkSensesiotDashboardModal.vue'
+import { getThemeSetting } from '~/utils/theme'
 
 export default {
   name: 'PublicDashboardPage',
@@ -88,13 +89,20 @@ export default {
 
     this.socketio.emit('requestChannel', this.dashboard.uid)
     this.socketio.on('mqtt', this.onSioMqtt)
+    this.socketio.on('updateWidget', this.onUpdateWidget)
   },
   beforeDestroy() {
     this.socketio.off('mqtt')
+    this.socketio.off('updateWidget')
   },
   methods: {
     onSioMqtt(data) {
       onSioMqtt(this.dashboardData, data)
+    },
+    onUpdateWidget(data) {
+      onUpdateWidget(this.dashboards, data)
+
+      this.$forceUpdate()
     },
     async refreshDashboardData() {
       this.dashboardDataId += 1

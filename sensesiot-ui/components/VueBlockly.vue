@@ -60,7 +60,12 @@ export default {
     autoSave(event) {
       if (this.saveEventsType.includes(event.type)) {
         const blockData = Blockly.serialization.workspaces.save(this.workspace)
-        this.$emit('input', { ...blockData })
+        const variables = this.workspace.getAllVariables().map((ele) => ({
+          name: ele.name,
+          id: ele.id_,
+        }))
+
+        this.$emit('input', { ...blockData, variables })
       }
     },
   },

@@ -21,6 +21,13 @@
               <font-awesome-icon :icon="['fas', 'coins']" fixed-width />
               Buy More
             </b-button>
+            <b-button size="sm" href="/redeem">
+              <font-awesome-icon
+                :icon="['fas', 'fa-ticket-simple']"
+                fixed-width
+              />
+              Redeem
+            </b-button>
           </div>
           <div class="my-2">
             <b>Lastest Login:</b>

@@ -8,4 +8,26 @@ export function truncate(input, length = 16) {
   return input
 }
 
-export default Object.freeze({ truncate })
+export function getSupportMarkdownDescription(inline = false) {
+  return (
+    `Support ${
+      inline ? 'Inline' : ''
+    } [Markdown](https://www.markdownguide.org/basic-syntax)\n` +
+    `Insert [FontAwesome](https://fontawesome.com/) free icon with syntax \`::group icon-name::\`\n` +
+    `**e.g.** \`::fas fa-a::\` = ::fas fa-a::`
+  )
+}
+
+export async function preditCredits($axios, additionList = {}) {
+  const { creditInfo, costs } = await $axios.$post(
+    '/api/sensesiot/credits/predit',
+    additionList
+  )
+  return { creditInfo, costs }
+}
+
+export default Object.freeze({
+  truncate,
+  getSupportMarkdownDescription,
+  preditCredits,
+})

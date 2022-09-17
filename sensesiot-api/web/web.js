@@ -84,6 +84,13 @@ export default function startWebService(
     });
   });
 
+  eventEmitter.on("updateWidget", ({ uid, widgetId, data }) => {
+    socketIOServer.to(`channel-${uid}`).emit("updateWidget", {
+      widgetId,
+      data,
+    });
+  });
+
   httpServer.listen(port, () => {
     callback(port);
   });
