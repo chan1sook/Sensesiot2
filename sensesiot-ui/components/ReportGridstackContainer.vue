@@ -142,7 +142,7 @@ export default {
   methods: {
     initGridstack(GridStack) {
       this.gridstack = GridStack.init(
-        { column: 1, cellHeight: '50vh', disableOneColumnMode: true },
+        { column: 1, cellHeight: '200px', disableOneColumnMode: true },
         this.$refs.gridstack
       )
       this.gridstack.on('change', this.onChange)

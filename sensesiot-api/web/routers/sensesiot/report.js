@@ -217,4 +217,8 @@ router.get("/report-data/:id", async (req, res) => {
   }
 });
 
+router.get("/report-data/:id/json", (req, res) => {
+  res.redirect(`/report-data/${req.params.id}`);
+});
+
 export default router;

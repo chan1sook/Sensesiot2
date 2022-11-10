@@ -1,14 +1,18 @@
 <template>
   <sensesiot-base-container>
-    <div
+    <b-container
       class="p-4 report"
       :class="[report.theme]"
       style="flex-grow: 1"
       :style="themeStyle"
     >
       <h2 class="text-center">{{ report.title || report.name }}</h2>
-      <b-button-toolbar class="report-toolbar-top">
-        <b-button variant="success" disabled>
+      <b-button-toolbar class="report-toolbar-top d-print-none">
+        <b-button variant="success" @click="printPage">
+          <font-awesome-icon :icon="['fas', 'fa-print']" />
+          <span class="d-none d-sm-inline"> Print</span>
+        </b-button>
+        <!-- <b-button variant="success" disabled>
           <font-awesome-icon :icon="['fas', 'fa-file-csv']" />
           <span class="d-none d-sm-inline"> Export CSV</span>
         </b-button>
@@ -19,7 +23,7 @@
         <b-button disabled>
           <font-awesome-icon :icon="['fas', 'fa-file-excel']" />
           <span class="d-none d-sm-inline"> Export .xlsx</span>
-        </b-button>
+        </b-button> -->
         <b-button
           v-if="isLogin"
           :href="`/sensesiot/report/${report._id}/edit`"
@@ -39,7 +43,7 @@
         :theme="report.theme"
         @adjustDate="adjustDate"
       ></report-gridstack-container>
-    </div>
+    </b-container>
   </sensesiot-base-container>
 </template>
 
@@ -106,6 +110,9 @@ export default {
     },
     getReportWidgetData(widget) {
       return getReportWidgetData(this.reportData, widget)
+    },
+    printPage() {
+      print()
     },
   },
 }
