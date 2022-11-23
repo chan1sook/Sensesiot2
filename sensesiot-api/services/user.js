@@ -3,6 +3,8 @@ import { sensesiotBase } from "../database/mongodb.js";
 import { log } from "../utils/logging.js";
 import devuserUids from "../firebase/devuseruid.js";
 
+const initCoins = 0;
+
 export async function initDevUsers() {
   const usersCol = sensesiotBase.collection("users");
   const devUsersCount = await usersCol.countDocuments({ role: "developer" });
@@ -12,7 +14,7 @@ export async function initDevUsers() {
       devuserUids.map((uid) => ({
         uid,
         role: "developer",
-        coins: 0,
+        coins: initCoins,
         firstLoginTime: null,
         lastestLoginTime: null,
       }))
@@ -41,7 +43,7 @@ export async function getUserInfo(uid) {
     userInfo = {
       uid,
       role: "user",
-      coins: 0,
+      coins: initCoins,
       createTime: new Date(),
       lastestUpdateTime: new Date(),
       lastestLoginTime: null,

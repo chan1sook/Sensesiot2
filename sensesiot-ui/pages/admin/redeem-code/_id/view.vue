@@ -122,8 +122,6 @@ export default {
         }
         delete editData._id
 
-        console.log(this.redeemCode.codes)
-
         const { redeemCode } = await this.$axios.$post(
           `/api/redeem-code/edit/${redeemId}`,
           editData

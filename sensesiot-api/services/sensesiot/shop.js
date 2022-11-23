@@ -8,12 +8,6 @@ import { getSensesiotUserInfo, updateSensesiotUserInfo } from "./user.js";
 export async function initSensesiotCreditProducts() {
   const shopsCol = sensesiotV2.collection("shops");
 
-  // if (process.env.NODE_ENV === "development") {
-  //   await shopsCol.deleteMany({
-  //     catergory: "coin",
-  //   });
-  // }
-
   const coinProductsCount = await shopsCol.countDocuments({
     catergory: "credit",
   });

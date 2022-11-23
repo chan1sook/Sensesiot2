@@ -1,9 +1,45 @@
-import { insertSensesiotDeviceControlData } from "../services/sensesiot/control.js";
-import { insertSensesiotDeviceData } from "../services/sensesiot/data.js";
+import {
+  getSensesiotDeviceLastestControlData,
+  insertSensesiotDeviceControlData,
+} from "../services/sensesiot/control.js";
+import {
+  getSensesiotDeviceLastestData,
+  insertSensesiotDeviceData,
+} from "../services/sensesiot/data.js";
 import { log } from "../utils/logging.js";
 
 const $SYS_PREFIX = "$SYS/";
 
+async function getRetainData(subtopic = "", userData = {}) {
+  const [topic, deviceKey, slot] = subtopic.split("/");
+
+  let result;
+  switch (topic) {
+    case "data":
+      result = await getSensesiotDeviceLastestData(
+        userData.uid,
+        deviceKey,
+        slot
+      );
+      if (result) {
+        return result.data;
+      }
+      break;
+    case "control":
+      result = await getSensesiotDeviceLastestControlData(
+        userData.uid,
+        deviceKey,
+        slot
+      );
+      if (result) {
+        return result.data;
+      }
+      break;
+    default:
+      break;
+  }
+  return null;
+}
 async function handleInsertData(subtopic = "", userData = {}, payload = "") {
   const [deviceKey, slot] = subtopic.split("/");
   const { uid } = userData;
@@ -84,9 +120,19 @@ export default async function authorizePublish(
       throw new Error(`${$SYS_PREFIX} topic is reserved`);
     }
 
+    let payload;
     if (client.userData) {
       const [topic, ...rest] = packet.topic.split("/");
       switch (topic) {
+        case "retain":
+          payload = await getRetainData(rest.join("/"), client.userData);
+          if (payload !== null) {
+            eventEmitter.emit("publishMqttApi", {
+              topic: rest.join("/"),
+              payload,
+            });
+          }
+          break;
         case "data":
           await handleInsertData(
             rest.join("/"),

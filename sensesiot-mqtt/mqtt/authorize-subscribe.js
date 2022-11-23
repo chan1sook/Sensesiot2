@@ -88,7 +88,6 @@ export default async function authorizeSubscribe(
   try {
     if (client.userData) {
       const [topic, ...rest] = subscription.topic.split("/");
-
       switch (topic) {
         case "#":
           break;

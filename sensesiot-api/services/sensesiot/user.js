@@ -1,13 +1,15 @@
 import { sensesiotV2 } from "../../database/mongodb.js";
 import { getSensesiotUsedCredits } from "./credits.js";
 
+const initCredits = 1000;
+
 export async function getSensesiotUserInfo(uid) {
   const usersCol = sensesiotV2.collection("users");
   let userInfo = await usersCol.findOne({ uid });
   if (!userInfo) {
     userInfo = {
       uid,
-      credits: 1000,
+      credits: initCredits,
       preferences: {},
       activePackages: [],
       createTime: new Date(),

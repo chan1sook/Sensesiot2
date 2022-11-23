@@ -19,7 +19,19 @@
             Industrial Internet of Things device.
           </b>
         </template>
-        <b-button variant="secondary">Coming Soon...</b-button>
+        <b-button
+          variant="success"
+          :href="isLogin ? '/sensesiot/dashboard' : '/login'"
+        >
+          Get Started
+        </b-button>
+        <b-button
+          href="https://github.com/chan1sook/SensesiotProtocolLib"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Get Firmware
+        </b-button>
       </b-jumbotron>
       <b-jumbotron class="shadow-2">
         <h2 class="text-center mb-4">What is "SENSES"</h2>
@@ -113,6 +125,9 @@ export default {
   computed: {
     currentYear() {
       return new Date().getFullYear()
+    },
+    isLogin() {
+      return this.$store.getters.role !== 'guest'
     },
   },
 }

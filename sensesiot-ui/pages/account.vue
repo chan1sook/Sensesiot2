@@ -17,11 +17,11 @@
           <div class="d-flex flex-row flex-wrap align-items-center my-2">
             <b class="mr-1">Coins:</b>
             <span class="mr-auto">{{ authUser.coins }}</span>
-            <b-button variant="success" size="sm" href="/shop">
+            <!-- <b-button class="mr-1" variant="success" size="sm" href="/shop">
               <font-awesome-icon :icon="['fas', 'coins']" fixed-width />
               Buy More
-            </b-button>
-            <b-button size="sm" href="/redeem">
+            </b-button> -->
+            <b-button size="sm" variant="success" href="/redeem">
               <font-awesome-icon
                 :icon="['fas', 'fa-ticket-simple']"
                 fixed-width

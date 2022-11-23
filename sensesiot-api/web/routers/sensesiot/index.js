@@ -17,6 +17,7 @@ router.use(baseRoute, shopRouter);
 router.use(baseRoute, dashboardRouter);
 router.use(baseRoute, deviceRouter);
 router.use(baseRoute, reportRouter);
+
 router.get(baseRoute, (req, res) => {
   res.status(200).send("OK");
 });

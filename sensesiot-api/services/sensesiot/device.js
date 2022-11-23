@@ -21,16 +21,21 @@ export async function createSensesiotDevice(uid, { name = "", model = "" }) {
   }
 
   const deviceCol = sensesiotV2.collection("devices");
+  const today = new Date();
+  const type = "custom";
+
   const data = {
     uid,
     deviceKey: objectHash({
       name,
       model,
-      createTime: new Date(),
+      type,
+      createTime: today.getTime(),
     }),
     name,
     model,
-    createTime: new Date(),
+    type,
+    createTime: today,
     lastestUpdateTime: new Date(),
   };
 

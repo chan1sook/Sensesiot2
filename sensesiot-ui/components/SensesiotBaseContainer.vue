@@ -1,9 +1,10 @@
 <template>
   <div class="d-flex flex-column screen-container">
     <b-navbar toggleable="md" type="light" variant="light" class="shadow-1">
-      <b-navbar-brand class="d-inline-flex align-items-center gap-2" href="#">
+      <b-navbar-brand class="d-inline-flex align-items-center gap-2" href="/">
         <img src="/icon.png" height="24" />
         <span class="font-weight-bold">SENSES</span>
+        <span class="font-weight-bold text-sm">(BETA)</span>
       </b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
@@ -19,6 +20,14 @@
               </b-dropdown-item>
               <b-dropdown-item href="/sensesiot/report">
                 Report
+              </b-dropdown-item>
+              <b-dropdown-divider></b-dropdown-divider>
+              <b-dropdown-item
+                href="https://github.com/chan1sook/SensesiotProtocolLib"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Get Firmware
               </b-dropdown-item>
               <b-dropdown-divider></b-dropdown-divider>
               <b-dropdown-item href="/sensesiot/shop"> Shops </b-dropdown-item>
@@ -76,9 +85,9 @@
                   {{ coinsPretty }}
                 </span>
               </b-dropdown-text>
-              <b-dropdown-item variant="sucessful" href="/shop">
+              <!-- <b-dropdown-item variant="sucessful" href="/shop">
                 Buy More
-              </b-dropdown-item>
+              </b-dropdown-item> -->
               <b-dropdown-item href="/redeem"> Redeem Code </b-dropdown-item>
               <b-dropdown-divider></b-dropdown-divider>
               <b-dropdown-item href="/account"> Account Info </b-dropdown-item>
@@ -179,5 +188,10 @@ export default {
 }
 .gap-2 {
   column-gap: 0.5rem;
+}
+
+.text-sm {
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.25rem; /* 20px */
 }
 </style>

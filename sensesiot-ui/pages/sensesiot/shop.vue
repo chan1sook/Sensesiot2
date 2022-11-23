@@ -4,7 +4,7 @@
       <sensesiot-content-container>
         <h2 class="text-center mb-4">
           <font-awesome-icon :icon="['fas', 'shop']" fixed-width />
-          Credit Shop
+          Sensesiot Credit Shop
         </h2>
         <b-row>
           <b-col v-for="product of products" :key="product._id" md="6">
