@@ -1,5 +1,5 @@
 <template>
-  <div class="overflow-auto" style="height: 100vh">
+  <div class="overflow-auto no-overflow-print" style="height: 100vh">
     <vue-scroll>
       <Nuxt />
     </vue-scroll>
@@ -18,5 +18,11 @@ export default {
 }
 .shadow-2 {
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+@media print {
+  .no-overflow-print {
+    overflow: hidden !important;
+    height: auto !important;
+  }
 }
 </style>

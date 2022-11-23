@@ -5,7 +5,7 @@
     :gridstack="gridstack"
     :editing="editing"
     :min-w="1"
-    :min-h="1"
+    :min-h="3"
     @edit="editWidget"
     @remove="removeWidget"
   >
@@ -268,23 +268,17 @@ export default {
   watch: {
     value() {
       this.resetAxis()
-      this.resizeChart()
 
       clearInterval(this.refreshId)
-      this.refreshId = setInterval(() => {
-        this.resetAxis()
-        this.resizeChart()
-      }, 5000)
+      this.refreshId = setInterval(this.resetAxis, 5000)
     },
   },
   mounted() {
     this.resetAxis()
-    this.resizeChart()
 
-    this.refreshId = setInterval(() => {
-      this.resetAxis()
-      this.resizeChart()
-    }, 5000)
+    this.refreshId = setInterval(this.resetAxis, 5000)
+
+    this.resizeChart()
   },
   beforeDestroy() {
     clearInterval(this.refreshId)

@@ -216,66 +216,66 @@ export async function fetchSensesiotDataByReportWidgets(
   return fetchLists;
 }
 
-function findWidgetChartReportData(reportData, widget) {
-  const result = [];
-  for (let i = 1; i <= widget.datasetCount; i += 1) {
-    const target = reportData.find(
-      (ele) =>
-        Array.isArray(ele.target) &&
-        ele.target.findIndex(
-          (ele2) => ele2._id === widget._id && ele2.i === i
-        ) !== -1
-    );
-    if (target) {
-      result.push({
-        ...target,
-        data: target.data.map((ele) => ({
-          x: dayjs(ele.ts).toDate(),
-          y: ele.metadata.data,
-        })),
-      });
-    } else {
-      result.push({
-        data: [],
-      });
-    }
-  }
+// function findWidgetChartReportData(reportData, widget) {
+//   const result = [];
+//   for (let i = 1; i <= widget.datasetCount; i += 1) {
+//     const target = reportData.find(
+//       (ele) =>
+//         Array.isArray(ele.target) &&
+//         ele.target.findIndex(
+//           (ele2) => ele2._id === widget._id && ele2.i === i
+//         ) !== -1
+//     );
+//     if (target) {
+//       result.push({
+//         ...target,
+//         data: target.data.map((ele) => ({
+//           x: dayjs(ele.ts).toDate(),
+//           y: ele.metadata.data,
+//         })),
+//       });
+//     } else {
+//       result.push({
+//         data: [],
+//       });
+//     }
+//   }
 
-  return result;
-}
+//   return result;
+// }
 
-async function getReportDataFilterWithData(reportWidgets = [], options = {}) {
-  const reportData = await fetchSensesiotDataByReportWidgets(
-    reportWidgets,
-    options
-  );
+// async function getReportDataFilterWithData(reportWidgets = [], options = {}) {
+//   const reportData = await fetchSensesiotDataByReportWidgets(
+//     reportWidgets,
+//     options
+//   );
 
-  return reportWidgets
-    .filter((ele) => ele.type === "chart")
-    .map((ele) => ({
-      ...ele,
-      data: findWidgetChartReportData(reportData.at, ele),
-    }));
-}
+//   return reportWidgets
+//     .filter((ele) => ele.type === "chart")
+//     .map((ele) => ({
+//       ...ele,
+//       data: findWidgetChartReportData(reportData.at, ele),
+//     }));
+// }
 
-export async function generateSensesiotDataReportPdf(
-  reportWidgets = [],
-  options = {}
-) {
-  const newWidgets = await getReportDataFilterWithData(reportWidgets, options);
-  console.log(newWidgets);
-}
-export async function generateSensesiotDataReportXlsx(
-  reportWidgets = [],
-  options = {}
-) {
-  const newWidgets = await getReportDataFilterWithData(reportWidgets, options);
-  console.log(newWidgets);
-}
+// export async function generateSensesiotDataReportPdf(
+//   reportWidgets = [],
+//   options = {}
+// ) {
+//   const newWidgets = await getReportDataFilterWithData(reportWidgets, options);
+//   console.log(newWidgets);
+// }
+// export async function generateSensesiotDataReportXlsx(
+//   reportWidgets = [],
+//   options = {}
+// ) {
+//   const newWidgets = await getReportDataFilterWithData(reportWidgets, options);
+//   console.log(newWidgets);
+// }
 
 export default Object.freeze({
   fetchSensesiotDataByReportFetchDataOf,
   fetchSensesiotDataByReportWidgets,
-  generateSensesiotDataReportPdf,
-  generateSensesiotDataReportXlsx,
+  // generateSensesiotDataReportPdf,
+  // generateSensesiotDataReportXlsx,
 });
