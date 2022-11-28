@@ -7,6 +7,7 @@ import {
   getUserInfo,
   updateUserLoginTime,
 } from "../../services/user.js";
+import { logUserLoginStats } from "../../services/stats.js";
 
 const router = Router();
 
@@ -17,7 +18,10 @@ router.post("/login", json(), async (req, res) => {
     }
 
     const userData = await decodeFirebaseAuthToken(req.body.token);
-    let userInfo = await getUserInfo(userData.uid);
+    let [userInfo] = await Promise.all([
+      getUserInfo(userData.uid),
+      logUserLoginStats(userData.uid),
+    ]);
     userInfo = await updateUserLoginTime(userData.uid);
 
     req.session.userData = userData;

@@ -2,6 +2,9 @@ import { ObjectId } from "mongodb";
 import { sensesiotV2 } from "../../database/mongodb.js";
 import { log } from "../../utils/logging.js";
 
+const baseDashboardCost = 50;
+const baseReportCost = 100;
+const baseDeviceCost = 200;
 const defaultDashboardWidgetCost = {
   label: 10,
   gauge: 25,
@@ -58,7 +61,7 @@ export async function initSensesiotCreditCosts() {
     log("Insert dashboardCreditCost", { name: "Init" });
     await costCol.insertOne({
       name: costIdentifyNames.dashboard,
-      cost: 500,
+      cost: baseDashboardCost,
     });
   }
 
@@ -95,7 +98,7 @@ export async function initSensesiotCreditCosts() {
     log("Insert deviceCreditCost", { name: "Init" });
     await costCol.insertOne({
       name: costIdentifyNames.device,
-      cost: 100,
+      cost: baseDeviceCost,
     });
   }
 
@@ -104,7 +107,7 @@ export async function initSensesiotCreditCosts() {
     log("Insert reportCreditCost", { name: "Init" });
     await costCol.insertOne({
       name: costIdentifyNames.report,
-      cost: 500,
+      cost: baseReportCost,
     });
   }
 

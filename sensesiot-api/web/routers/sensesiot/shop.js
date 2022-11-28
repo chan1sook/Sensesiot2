@@ -50,30 +50,24 @@ router.post("/shop/buy", json(), async (req, res) => {
     }
 
     const userInfo = await getUserInfo(req.session.userData.uid);
-    if (userInfo.role === "developer") {
-      const transaction = await createSensesiotTransaction(
+    const transaction = await createSensesiotTransaction(
+      userInfo.uid,
+      req.body.productId,
+      "completed"
+    );
+
+    if (transaction.product.catergory.includes("credit")) {
+      await exchangeSensesiotCredit(
         userInfo.uid,
-        req.body.productId,
-        "completed"
+        parseInt(transaction.product.price.toString(), 10),
+        transaction.produexchangeSensesiotCreditct.credits
       );
-
-      if (transaction.product.catergory.includes("credit")) {
-        await exchangeSensesiotCredit(
-          userInfo.uid,
-          parseInt(transaction.product.price.toString(), 10),
-          transaction.produexchangeSensesiotCreditct.credits
-        );
-      }
-
-      res.status(200).json({
-        status: "OK",
-        transaction,
-      });
-
-      return;
     }
 
-    throw new WebError("Not Implemented", 501);
+    res.status(200).json({
+      status: "OK",
+      transaction,
+    });
   } catch (err) {
     let code = 500;
 

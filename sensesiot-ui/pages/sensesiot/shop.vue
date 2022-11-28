@@ -9,7 +9,7 @@
         <b-row>
           <b-col v-for="product of products" :key="product._id" md="6">
             <b-card class="d-flex flex-column items-center text-center mb-2">
-              <h4 class="mb-2">{{ product.name }}</h4>
+              <h4 class="mb-2">{{ getProductName(product) }}</h4>
               <font-awesome-icon
                 :icon="['fas', 'bolt']"
                 class="my-4"
@@ -61,11 +61,11 @@
     >
       <template v-if="selectProduct">
         <p class="my-2">
-          Are you sure about buy <i>[{{ selectProduct.name }}]</i>
+          Are you sure about buy <i>[{{ getProductName(selectProduct) }}]</i>
         </p>
         <p class="my-2">
           <b>Name:</b>
-          <span>{{ selectProduct.name }}</span>
+          <span>{{ getProductName(selectProduct) }}</span>
         </p>
         <p class="my-2">
           <b>Price:</b>
@@ -99,7 +99,7 @@
         <p class="my-2">You transaction {{ transactionId }} complete!</p>
         <p class="my-2">
           <b>Name:</b>
-          <span>{{ selectProduct.name }}</span>
+          <span>{{ getProductName(selectProduct) }}</span>
         </p>
         <p class="my-2">
           <b>Price:</b>
@@ -127,7 +127,7 @@
         <p class="my-2"><b>Cause:</b> {{ errorCause }}</p>
         <p class="my-2">
           <b>Name:</b>
-          <span>{{ selectProduct.name }}</span>
+          <span>{{ getProductName(selectProduct) }}</span>
         </p>
         <p class="my-2">
           <b>Price:</b>
@@ -185,6 +185,10 @@ export default {
   methods: {
     isPriceEqual,
     formatCurrency,
+    getProductName(product) {
+      const numberStr = product.credits.toLocaleString()
+      return `${numberStr} Credits`
+    },
     async buyCoin(ev) {
       if (!this.selectProduct) {
         return

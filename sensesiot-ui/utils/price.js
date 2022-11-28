@@ -6,7 +6,13 @@ export function isPriceEqual(value1, value2) {
   return d1.equals(d2)
 }
 export function formatCurrency(value, unit = '') {
-  return `${unit}${value}`
+  let valueNum = value
+  if (typeof valueNum === 'string') {
+    valueNum = Number(valueNum)
+  }
+  return `${unit}${valueNum.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+  })}`
 }
 
 export default Object.freeze({

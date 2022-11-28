@@ -11,13 +11,12 @@
           ></b-img>
         </template>
         <template #lead>
-          <b style="color: rgb(61, 115, 99)">
-            Industrial Internet of Things platform (IIoT)
-          </b>
-          Customization dashboard and Data logger for
-          <b style="color: rgb(148, 94, 1)">
-            Industrial Internet of Things device.
-          </b>
+          <b style="color: rgb(61, 115, 99)">Internet of things</b> platform
+          tower digital twin technology.
+          <p class="mt-2">
+            Customization controllable dashboard and report for
+            <b style="color: rgb(148, 94, 1)"> Internet of Things device. </b>
+          </p>
         </template>
         <b-button
           variant="success"
@@ -98,17 +97,35 @@
             class="mr-2 icon-list-start"
             fixed-width
           />
-          Logisenses Co.,Ltd. 99/231 soi on-nut 74/3-1 On-nut Road prawet prawet
-          bangkok 10250
+          Logisenses Co.,Ltd. 88/5-2, Tambon Khlong Song, Amphoe Khlong Luang,
+          Pathumthani, 12120
         </p>
         <p>
-          <a href="https://www.facebook.com/SensesIoT/">
+          <a
+            href="https://www.facebook.com/SensesIoT/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <font-awesome-icon
               :icon="['fab', 'facebook']"
               class="mr-2 icon-list-start"
               fixed-width
             />
-            Facebook
+            Senses Facebook Page
+          </a>
+        </p>
+        <p>
+          <a
+            href="https://www.facebook.com/senses.open"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <font-awesome-icon
+              :icon="['fab', 'facebook']"
+              class="mr-2 icon-list-start"
+              fixed-width
+            />
+            Senses Open Facebook Page
           </a>
         </p>
       </b-jumbotron>
