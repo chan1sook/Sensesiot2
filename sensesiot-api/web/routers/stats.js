@@ -2,8 +2,9 @@ import dayjs from "dayjs";
 import { Router } from "express";
 import {
   logUserLoginStats,
+  getLogUserLoginCountsByTimes,
   getLogUserLoginStatsByTimes,
-  getUserCounts,
+  getAllUserCounts,
 } from "../../services/stats.js";
 import { getUserInfo } from "../../services/user.js";
 
@@ -36,8 +37,8 @@ router.get("/login-stats", async (req, res) => {
     }
 
     const period = req.query.period || "day";
-    let tsStart = parseInt(req.query.startTs, 10);
-    let tsEnd = parseInt(req.query.endTss, 10);
+    let tsStart = parseInt(req.query.tsStart, 10);
+    let tsEnd = parseInt(req.query.tsEnd, 10);
 
     if (!Number.isInteger(tsStart)) {
       tsStart = dayjs().hour(0).minute(0).second(0).millisecond(0).valueOf();
@@ -46,8 +47,9 @@ router.get("/login-stats", async (req, res) => {
       tsEnd = tsStart + 24 * 60 * 60 * 1000;
     }
 
-    const [userCounts, userLoginStats] = await Promise.all([
-      getUserCounts(),
+    const [allUserCounts, userCounts, userLoginStats] = await Promise.all([
+      getAllUserCounts(),
+      getLogUserLoginCountsByTimes(tsStart, tsEnd),
       getLogUserLoginStatsByTimes(period, {
         tsStart,
         tsEnd,
@@ -56,6 +58,7 @@ router.get("/login-stats", async (req, res) => {
 
     res.status(200).json({
       status: "OK",
+      allUserCounts,
       userCounts,
       userLoginStats,
     });

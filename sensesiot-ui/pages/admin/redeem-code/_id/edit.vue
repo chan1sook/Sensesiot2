@@ -56,8 +56,8 @@
           <b-button
             class="mx-auto"
             variant="success"
-            @click="editRedeemData"
             :disabled="!isRedeemCodesDataValid"
+            @click="editRedeemData"
           >
             <font-awesome-icon :icon="['fas', 'fa-save']" />
             Save

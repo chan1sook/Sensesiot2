@@ -38,6 +38,9 @@
                 <b-dropdown-item href="/admin/redeem-code">
                   Redeem Code
                 </b-dropdown-item>
+                <b-dropdown-item href="/admin/user-stats">
+                  User Stats
+                </b-dropdown-item>
               </b-nav-item-dropdown>
             </template>
             <b-nav-item-dropdown right>

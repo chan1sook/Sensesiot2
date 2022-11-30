@@ -26,10 +26,24 @@ export async function logUserLoginStats(uid) {
   }
 }
 
-export async function getUserCounts() {
+export async function getAllUserCounts() {
   const usersCol = sensesiotBase.collection("users");
 
   return usersCol.countDocuments();
+}
+
+export async function getLogUserLoginCountsByTimes(tsStart, tsEnd) {
+  const loginStatsCol = sensesiotStats.collection("login");
+
+  const logDocs = await loginStatsCol
+    .find({ markTs: { $gte: tsStart, $lte: tsEnd } })
+    .toArray();
+
+  const filterLogs = logDocs.filter(
+    (ele, i, arr) => arr.findIndex((ele2) => ele.uid === ele2.uid) === i
+  );
+
+  return filterLogs.length;
 }
 
 export async function getLogUserLoginStatsByTimes(period, { tsStart, tsEnd }) {
@@ -70,6 +84,7 @@ export async function getLogUserLoginStatsByTimes(period, { tsStart, tsEnd }) {
 
 export default Object.freeze({
   logUserLoginStats,
-  getUserCounts,
+  getAllUserCounts,
+  getLogUserLoginCountsByTimes,
   getLogUserLoginStatsByTimes,
 });
