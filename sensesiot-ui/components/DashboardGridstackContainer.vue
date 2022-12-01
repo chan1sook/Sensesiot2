@@ -153,20 +153,6 @@ export default {
       id: 0,
     }
   },
-  watch: {
-    widgets(value) {
-      this.ready = false
-      const oldGridstack = this.gridstack
-      if (oldGridstack) {
-        oldGridstack.removeAll(false)
-      }
-
-      this.$nextTick(() => {
-        const { GridStack } = require('gridstack')
-        this.initGridstack(GridStack)
-      })
-    },
-  },
   mounted() {
     const { GridStack } = require('gridstack')
     this.id = setInterval(() => {
@@ -197,8 +183,7 @@ export default {
     },
     getData() {
       const gridSave = this.gridstack.save(false)
-
-      return gridSave
+      const result = gridSave
         .map((ele) => {
           const id = ele.id.replaceAll('gs-widget-', '')
           const targetWidget = this.widgets.find((ele) => ele._id === id)
@@ -215,6 +200,7 @@ export default {
           }
         })
         .filter((ele) => !!ele)
+      return result
     },
     onChange() {
       const data = this.getData()
