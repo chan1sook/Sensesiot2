@@ -1,12 +1,7 @@
 <template>
   <div class="control toggle" :class="{ disabled }">
-    <div class="toggle-body" :style="controlBgStyle">
-      <div
-        class="toggle-fill"
-        :state="state"
-        :style="controlFgStyle"
-        @click="onClick"
-      >
+    <div class="toggle-body" :style="controlBgStyle" @click="onClick">
+      <div class="toggle-fill" :state="state" :style="controlFgStyle">
         <div class="toggle-knob" :style="controlKnobStyle">
           <div class="toggle-text" :style="controlValueStyle">
             {{ statePretty }}
