@@ -1,6 +1,7 @@
 import "colors";
 
 import { MongoClient } from "mongodb";
+import { dbNameOf } from "../utils/dbname.js";
 
 import { log, error } from "../utils/logging.js";
 
@@ -16,12 +17,6 @@ export async function init() {
   }
 }
 
-const nodeEnv = process.env.NODE_ENV;
-function dbNameOf(name) {
-  return nodeEnv === "production"
-    ? name
-    : `${name}-${nodeEnv || "development"}`;
-}
 export const sensesiotBase = mongodb.db(dbNameOf("sensesiotBase"));
 export const sensesiotStats = mongodb.db(dbNameOf("sensesiotStats"));
 export const sensesiotV2 = mongodb.db(dbNameOf("sensesiotV2"));

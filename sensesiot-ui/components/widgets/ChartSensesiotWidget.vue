@@ -65,9 +65,9 @@ import chroma from 'chroma-js'
 import { th } from 'date-fns/locale'
 
 import DefaultSensesiotWidget from './DefaultSensesiotWidget.vue'
-import BarChart from './chart/BarChart.vue'
-import LineChart from './chart/LineChart.vue'
-import AreaChart from './chart/AreaChart.vue'
+import BarChart from '~/components/charts/BarChart.vue'
+import LineChart from '~/components/charts/LineChart.vue'
+import AreaChart from '~/components/charts/AreaChart.vue'
 
 import { getThemeSetting } from '~/utils/theme'
 import { getColorIfValid } from '~/utils/gradient'

@@ -36,7 +36,7 @@ export async function createSensesiotDevice(uid, { name = "", model = "" }) {
     model,
     type,
     createTime: today,
-    lastestUpdateTime: new Date(),
+    lastestUpdateTime: today,
   };
 
   const { insertedId } = await deviceCol.insertOne(data);

@@ -79,6 +79,7 @@ export default {
   },
   computed: {
     gridStackAttributes() {
+      console.log(!this.editing || this.locked)
       return {
         id: `gs-widget-${this.widget._id}`,
         'gs-id': `gs-widget-${this.widget._id}`,

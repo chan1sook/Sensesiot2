@@ -52,7 +52,9 @@
             ></b-input>
           </b-form-group>
         </template>
-        <div class="d-flex flex-row justify-self-center align-center my-2 mt-4">
+        <div
+          class="d-flex flex-row justify-self-center align-items-center my-2 mt-4"
+        >
           <b-button
             class="mx-auto"
             variant="success"

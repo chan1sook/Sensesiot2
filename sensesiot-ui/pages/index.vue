@@ -13,11 +13,11 @@
         <template #lead>
           <b style="color: rgb(61, 115, 99)">Internet of things</b> platform
           tower digital twin technology.
-          <p class="mt-2">
-            Customization controllable dashboard and report for
-            <b style="color: rgb(148, 94, 1)"> Internet of Things device. </b>
-          </p>
         </template>
+        <p class="mt-2 lead">
+          Customization controllable dashboard and report for
+          <b style="color: rgb(148, 94, 1)"> Internet of Things device. </b>
+        </p>
         <b-button
           variant="success"
           :href="isLogin ? '/sensesiot/dashboard' : '/login'"
@@ -139,6 +139,9 @@
 <script>
 export default {
   name: 'IndexPage',
+  data() {
+    return {}
+  },
   computed: {
     currentYear() {
       return new Date().getFullYear()

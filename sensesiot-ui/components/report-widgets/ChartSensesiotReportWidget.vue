@@ -58,7 +58,7 @@ import { th } from 'date-fns/locale'
 import dayjs from 'dayjs'
 
 import DefaultSensesiotReportWidget from './DefaultSensesiotReportWidget.vue'
-import MixedChart from './chart/MixedChart.vue'
+import MixedChart from '~/components/charts/MixedChart.vue'
 
 import { getThemeSetting } from '~/utils/theme'
 import { getColorIfValid } from '~/utils/gradient'

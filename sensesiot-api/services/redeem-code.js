@@ -127,8 +127,8 @@ export async function generateRedeemCode({
           .toDate()
       : null,
     redeemValue,
-    createTime: new Date(),
-    lastUpdateTime: new Date(),
+    createTime: today,
+    lastUpdateTime: today,
   };
 
   const { insertedId } = await redeemCol.insertOne(inseredData);

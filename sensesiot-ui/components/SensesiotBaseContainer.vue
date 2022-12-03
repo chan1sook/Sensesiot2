@@ -35,11 +35,14 @@
             <template v-if="isDev">
               <b-nav-item-dropdown right>
                 <template #button-content> Dev Menu </template>
-                <b-dropdown-item href="/admin/redeem-code">
-                  Redeem Code
-                </b-dropdown-item>
                 <b-dropdown-item href="/admin/user-stats">
                   User Stats
+                </b-dropdown-item>
+                <b-dropdown-item href="/admin/news">
+                  Manage News
+                </b-dropdown-item>
+                <b-dropdown-item href="/admin/redeem-code">
+                  Redeem Code
                 </b-dropdown-item>
               </b-nav-item-dropdown>
             </template>
@@ -88,10 +91,9 @@
                   {{ coinsPretty }}
                 </span>
               </b-dropdown-text>
-              <!-- <b-dropdown-item variant="sucessful" href="/shop">
-                Buy More
-              </b-dropdown-item> -->
               <b-dropdown-item href="/redeem"> Redeem Code </b-dropdown-item>
+              <b-dropdown-divider></b-dropdown-divider>
+              <b-dropdown-item @click="fetchNews(true)"> News </b-dropdown-item>
               <b-dropdown-divider></b-dropdown-divider>
               <b-dropdown-item href="/account"> Account Info </b-dropdown-item>
               <b-overlay :show="logoutLoading">
@@ -108,15 +110,34 @@
       </b-collapse>
     </b-navbar>
     <slot></slot>
+    <sensesiot-news-modal
+      id="modal-news"
+      :news="news"
+      :avaliable="avaliableNews"
+      :skip-popup-today="skipPopupToday"
+      @close="closeNews"
+    >
+    </sensesiot-news-modal>
   </div>
 </template>
 
 <script>
+import dayjs from 'dayjs'
+import SensesiotNewsModal from '~/components/modals/SensesiotNewsModal.vue'
 import { formatSensesiotCredit } from '~/utils/sensesiot-credits'
+import { sortNews } from '~/utils/news'
 
 export default {
+  components: {
+    SensesiotNewsModal,
+  },
   data() {
-    return { logoutLoading: false }
+    return {
+      logoutLoading: false,
+      avaliableNews: false,
+      skipPopupToday: false,
+      news: [],
+    }
   },
   computed: {
     isLogin() {
@@ -173,12 +194,71 @@ export default {
       return this.$route.path.startsWith('/sensesiot')
     },
   },
+  mounted() {
+    this.triggerShowNews()
+  },
   methods: {
     formatSensesiotCredit,
+    triggerShowNews() {
+      if (this.$route.path === '/' && window.localStorage) {
+        const rawNewsInfo = window.localStorage.getItem('sensesiot-news')
+        const newsInfo = {
+          skipShowBefore: Date.now(),
+        }
+
+        if (rawNewsInfo) {
+          Object.assign(newsInfo, JSON.parse(rawNewsInfo))
+        }
+
+        this.skipPopupToday = Date.now() < newsInfo.skipShowBefore
+
+        if (Date.now() >= newsInfo.skipShowBefore) {
+          this.fetchNews()
+        }
+      }
+    },
+    async fetchNews(forced = false) {
+      try {
+        const { news } = await this.$axios.$get(
+          '/api/news?onlyPublish&limit=10'
+        )
+        news.sort(sortNews)
+        this.news = news
+        this.avaliableNews = true
+
+        if (forced || this.news.length > 0) {
+          this.$bvModal.show('modal-news')
+        }
+      } catch (err) {
+        console.error(err)
+        this.avaliableNews = false
+      }
+    },
     async logout() {
       this.logoutLoading = true
       await this.$store.dispatch('logout')
       this.logoutLoading = false
+    },
+    closeNews(skipPopupToday) {
+      this.skipPopupToday = skipPopupToday
+
+      if (!window.localStorage) {
+        return
+      }
+
+      const newsInfo = {
+        skipShowBefore: Date.now(),
+      }
+      if (skipPopupToday) {
+        newsInfo.skipShowBefore = dayjs()
+          .hour(0)
+          .minute(0)
+          .second(0)
+          .millisecond(0)
+          .add(1, 'day')
+          .valueOf()
+      }
+      window.localStorage.setItem('sensesiot-news', JSON.stringify(newsInfo))
     },
   },
 }

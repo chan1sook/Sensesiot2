@@ -13,7 +13,12 @@ export function auth() {
   return firebaseAdmin.app().auth();
 }
 
+export function storage() {
+  return firebaseAdmin.app().storage();
+}
+
 export default Object.freeze({
   init,
   auth,
+  storage,
 });

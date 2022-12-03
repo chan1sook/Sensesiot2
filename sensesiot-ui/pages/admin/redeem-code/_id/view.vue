@@ -7,7 +7,7 @@
           {{ redeemCode.name }}
         </h2>
         <div
-          class="mt-4 d-flex flex-row flex-wrap align-center"
+          class="mt-4 d-flex flex-row flex-wrap align-items-center"
           style="gap: 0.5em"
         >
           <b-button href="/admin/redeem-code">
