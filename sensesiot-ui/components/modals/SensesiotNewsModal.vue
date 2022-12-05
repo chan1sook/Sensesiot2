@@ -7,14 +7,15 @@
     no-stacking
     ok-only
     @ok="onClose"
-    @cancel="onClose"
+    @close="onClose"
   >
     <b-carousel
       id="carousel-1"
       controls
       indicators
+      :value="offset"
       background="#ababab"
-      img-width="1024"
+      img-width="766"
       img-height="400"
     >
       <template v-if="avaliable && news.length > 0">
@@ -28,23 +29,23 @@
             >
               <img
                 class="d-block w-100"
-                width="1024"
+                width="766"
                 height="400"
                 :src="currentNews.publicImgUrl"
                 :alt="currentNews.name"
                 :title="currentNews.description || currentNews.name"
-                style="object-fit: cover"
+                style="object-fit: contain"
               />
             </a>
             <img
               v-else
               class="d-block w-100"
-              width="1024"
+              width="766"
               height="400"
               :src="currentNews.publicImgUrl"
               :alt="currentNews.name"
               :title="currentNews.description || currentNews.name"
-              style="object-fit: cover"
+              style="object-fit: contain"
             />
           </template>
         </b-carousel-slide>
@@ -52,7 +53,7 @@
       <b-carousel-slide
         v-else
         caption="No News"
-        img-src="https://picsum.photos/1024/480/?image=24"
+        img-src="https://picsum.photos/766/400/?image=24"
       ></b-carousel-slide>
     </b-carousel>
     <div class="mt-2 text-center">
@@ -80,6 +81,10 @@ export default {
       default() {
         return []
       },
+    },
+    offset: {
+      type: Number,
+      default: 0,
     },
     skipPopupToday: {
       type: Boolean,

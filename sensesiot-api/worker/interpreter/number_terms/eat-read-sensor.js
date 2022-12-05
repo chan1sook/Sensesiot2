@@ -14,8 +14,13 @@ export default async function eatReadSensorData(astInfo) {
     slot: `${SLOT}`,
   });
 
-  if (data && data.metadata && Number.isFinite(data.metadata.data)) {
-    return data.metadata.data;
+  if (
+    Array.isArray(data) &&
+    data.length > 0 &&
+    data[0].metadata &&
+    Number.isFinite(data[0].metadata.data)
+  ) {
+    return data[0].metadata.data;
   }
 
   return NaN;

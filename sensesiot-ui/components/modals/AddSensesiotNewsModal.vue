@@ -20,7 +20,7 @@
         placeholder="Choose a file or drop it here..."
         drop-placeholder="Drop file here..."
       ></b-form-file>
-      <b-form-text>Recommend Size 1024x480</b-form-text>
+      <b-form-text>Recommend Size 766x400</b-form-text>
     </b-form-group>
     <b-form-group v-if="imageFileURL" label="Preview Image">
       <b-img :src="imageFileURL" height="200"></b-img>

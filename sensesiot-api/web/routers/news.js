@@ -103,7 +103,7 @@ router.post("/news/add", upload.single("imageFile"), async (req, res) => {
 
     if (req.file) {
       const imgBuffer = await Jimp.read(req.file.buffer).then((img) =>
-        img.resize(1024, 400).getBufferAsync("image/png")
+        img.resize(766, 400).getBufferAsync("image/png")
       );
       filename = `news-${objectHash({
         ts: Date.now(),
@@ -181,7 +181,7 @@ router.post(
       let filename = "";
       if (req.file) {
         const imgBuffer = await Jimp.read(req.file.buffer).then((img) =>
-          img.resize(1024, 400).getBufferAsync("image/png")
+          img.resize(766, 400).getBufferAsync("image/png")
         );
         filename = `news-${objectHash({
           ts: Date.now(),

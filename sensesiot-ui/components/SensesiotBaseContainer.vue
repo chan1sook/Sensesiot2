@@ -93,7 +93,9 @@
               </b-dropdown-text>
               <b-dropdown-item href="/redeem"> Redeem Code </b-dropdown-item>
               <b-dropdown-divider></b-dropdown-divider>
-              <b-dropdown-item @click="fetchNews(true)"> News </b-dropdown-item>
+              <b-dropdown-item @click="refreshShowNewsPopup">
+                News
+              </b-dropdown-item>
               <b-dropdown-divider></b-dropdown-divider>
               <b-dropdown-item href="/account"> Account Info </b-dropdown-item>
               <b-overlay :show="logoutLoading">
@@ -113,6 +115,7 @@
     <sensesiot-news-modal
       id="modal-news"
       :news="news"
+      :offset="newsOffset"
       :avaliable="avaliableNews"
       :skip-popup-today="skipPopupToday"
       @close="closeNews"
@@ -137,6 +140,7 @@ export default {
       avaliableNews: false,
       skipPopupToday: false,
       news: [],
+      newsOffset: 0,
     }
   },
   computed: {
@@ -199,11 +203,13 @@ export default {
   },
   methods: {
     formatSensesiotCredit,
-    triggerShowNews() {
+    async triggerShowNews() {
       if (this.$route.path === '/' && window.localStorage) {
         const rawNewsInfo = window.localStorage.getItem('sensesiot-news')
         const newsInfo = {
           skipShowBefore: Date.now(),
+          lastestNews: null,
+          offset: 0,
         }
 
         if (rawNewsInfo) {
@@ -211,13 +217,31 @@ export default {
         }
 
         this.skipPopupToday = Date.now() < newsInfo.skipShowBefore
+        this.newsOffset = newsInfo.offset
 
         if (Date.now() >= newsInfo.skipShowBefore) {
-          this.fetchNews()
+          await this.fetchNews()
+
+          if (
+            this.news.length > 0 &&
+            newsInfo.lastestNews === this.news[0]._id
+          ) {
+            this.newsOffset = (this.newsOffset + 1) % this.news.length
+          } else {
+            this.newsOffset = 0
+          }
+
+          if (this.news.length > 0) {
+            this.$bvModal.show('modal-news')
+          }
         }
       }
     },
-    async fetchNews(forced = false) {
+    async refreshShowNewsPopup() {
+      await this.fetchNews()
+      this.$bvModal.show('modal-news')
+    },
+    async fetchNews() {
       try {
         const { news } = await this.$axios.$get(
           '/api/news?onlyPublish&limit=10'
@@ -225,10 +249,6 @@ export default {
         news.sort(sortNews)
         this.news = news
         this.avaliableNews = true
-
-        if (forced || this.news.length > 0) {
-          this.$bvModal.show('modal-news')
-        }
       } catch (err) {
         console.error(err)
         this.avaliableNews = false
@@ -245,9 +265,10 @@ export default {
       if (!window.localStorage) {
         return
       }
-
       const newsInfo = {
         skipShowBefore: Date.now(),
+        lastestNews: this.news[0] ? this.news[0]._id : null,
+        offset: this.newsOffset || 0,
       }
       if (skipPopupToday) {
         newsInfo.skipShowBefore = dayjs()
