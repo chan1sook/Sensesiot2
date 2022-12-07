@@ -11,9 +11,10 @@
   >
     <b-carousel
       id="carousel-1"
+      v-model="caroselOffset"
       controls
       indicators
-      :value="offset"
+      :interval="5000"
       background="#ababab"
       img-width="766"
       img-height="400"
@@ -94,6 +95,7 @@ export default {
   data() {
     return {
       skip: false,
+      caroselOffset: this.offset,
     }
   },
   watch: {
@@ -102,6 +104,9 @@ export default {
       handler(value) {
         this.skip = value
       },
+    },
+    offset(value) {
+      this.caroselOffset = value
     },
   },
   methods: {

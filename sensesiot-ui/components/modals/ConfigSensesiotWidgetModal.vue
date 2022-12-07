@@ -9,6 +9,7 @@
     no-close-on-esc
     no-close-on-backdrop
     scrollable
+    :ok-disabled="!isValidation"
     @ok="onOk"
   >
     <b-form-group
@@ -116,7 +117,7 @@
 </template>
 
 <script>
-import { getConfigableWidgetParams } from '~/utils/dashboard'
+import { getConfigableWidgetParams, checkValidation } from '~/utils/dashboard'
 
 export default {
   name: 'ConfigSensesiotWidgetModal',
@@ -169,6 +170,17 @@ export default {
           value: ele.deviceKey,
         }
       })
+    },
+    isValidation() {
+      for (const param of this.widgetParams) {
+        if (
+          param.extraValidation &&
+          !checkValidation(param.extraValidation, this.widgetData)
+        ) {
+          return false
+        }
+      }
+      return true
     },
   },
   watch: {

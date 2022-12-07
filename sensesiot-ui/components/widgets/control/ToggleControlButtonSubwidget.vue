@@ -1,7 +1,7 @@
 <template>
   <div class="control toggle" :class="{ disabled }">
     <div class="toggle-body" :style="controlBgStyle" @click="onClick">
-      <div class="toggle-fill" :state="state" :style="controlFgStyle">
+      <div class="toggle-fill" :state="actualState" :style="controlFgStyle">
         <div class="toggle-knob" :style="controlKnobStyle">
           <div class="toggle-text" :style="controlValueStyle">
             {{ statePretty }}
@@ -77,18 +77,25 @@ export default {
 
       return styles
     },
+    actualState() {
+      if (['on', 'off'].includes(this.state)) {
+        return this.state
+      }
+      return 'off'
+    },
     statePretty() {
-      if (this.state === 'on') {
+      if (this.actualState === 'on') {
         return 'On'
-      } else if (this.state === 'off') {
+      } else if (this.actualState === 'off') {
         return 'Off'
       }
-      return this.state
+
+      return 'Off'
     },
   },
   methods: {
     onClick() {
-      const nextState = this.state === 'on' ? 'off' : 'on'
+      const nextState = this.actualState === 'on' ? 'off' : 'on'
       this.$emit('change', nextState)
     },
   },

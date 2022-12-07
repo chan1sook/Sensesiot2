@@ -1,6 +1,6 @@
 <template>
   <div class="control range" :class="{ disabled }">
-    <div class="range-knob" :style="controlKnobStyle">
+    <div class="range-knob" :style="controlKnobStyle" :title="rangeTitle">
       <div class="range-text" :style="controlValueStyle">
         {{ statePretty }}
       </div>
@@ -40,7 +40,7 @@ export default {
   computed: {
     controlFgStyle() {
       const styles = {
-        width: `${this.actualPercent}%`,
+        width: `${this.percentBarValue}%`,
       }
 
       if (!this.widget.useThemeFgColor) {
@@ -83,35 +83,55 @@ export default {
 
       return styles
     },
+    rangeMin() {
+      if (Number.isFinite(this.widget.rangeMin)) {
+        return this.widget.rangeMin
+      }
+
+      return 0
+    },
+    rangeMax() {
+      if (Number.isFinite(this.widget.rangeMax)) {
+        return this.widget.rangeMax
+      }
+
+      return 100
+    },
     statePretty() {
       const n = parseInt(this.state, 10)
-      if (!Number.isInteger(n) || n < 0 || n > 100) {
+      if (!Number.isInteger(n) || n < this.rangeMin || n > this.rangeMax) {
         return '-'
       }
 
-      return this.actualPercent.toString()
+      return this.state
     },
-    actualPercent() {
+    percentBarValue() {
       const n = parseInt(this.state, 10)
-      if (!Number.isInteger(n) || n < 0 || n > 100) {
+      if (!Number.isInteger(n) || n < this.rangeMin || n > this.rangeMax) {
         return 0
       }
 
-      if (n < 0) {
+      const dPercent = this.rangeMax - this.rangeMin
+      const percent = Math.round(((n - this.rangeMin) / dPercent) * 100)
+      if (percent < 0) {
         return 0
-      } else if (n > 100) {
+      } else if (percent > 100) {
         return 100
       }
 
-      return n
+      return percent
+    },
+    rangeTitle() {
+      return `${this.statePretty} [${this.rangeMin}-${this.rangeMax}]`
     },
   },
   methods: {
     onClick(ev) {
       const x = ev.offsetX
       const width = this.$refs.rangeBody.clientWidth
-      const percent = Math.round((x / width) * 100)
-      this.$emit('change', percent.toString())
+      const dPercent = this.rangeMax - this.rangeMin
+      const value = this.rangeMin + Math.round((x / width) * dPercent)
+      this.$emit('change', value.toString())
     },
   },
 }

@@ -137,6 +137,8 @@ export function getDefaultWidgetData(type = 'label') {
         useThemeLabelColor: true,
         controlDevice: '',
         controlSlot: 1,
+        rangeMin: 0,
+        rangeMax: 100,
       }
     case 'condition':
       return {
@@ -240,6 +242,7 @@ export function getConfigableWidgetParams(
           field: 'dataSlot',
           label: 'Slot',
           type: 'number',
+          min: 1,
         },
       ]
     case 'chart':
@@ -373,6 +376,7 @@ export function getConfigableWidgetParams(
           field: 'dataSlot',
           label: 'Slot',
           type: 'number',
+          min: 1,
         },
       ]
     case 'control':
@@ -459,6 +463,20 @@ export function getConfigableWidgetParams(
           field: 'controlSlot',
           label: 'Slot',
           type: 'number',
+          min: 1,
+        },
+        {
+          field: 'rangeMin',
+          label: 'Slider Min Value',
+          type: 'number',
+          showIfFieldOp: ['controlType', '===', 'range'],
+        },
+        {
+          field: 'rangeMax',
+          label: 'Slider Max Value',
+          type: 'number',
+          showIfFieldOp: ['controlType', '===', 'range'],
+          extraValidation: 'rangeMinMax',
         },
       ]
     case 'condition':
@@ -603,6 +621,19 @@ export function onUpdateWidget(dashboards, data) {
   }
 }
 
+export function checkValidation(type, widgetData) {
+  switch (type) {
+    case 'rangeMinMax':
+      return (
+        Number.isFinite(widgetData.rangeMin) &&
+        Number.isFinite(widgetData.rangeMax) &&
+        widgetData.rangeMax > widgetData.rangeMin
+      )
+    default:
+      return true
+  }
+}
+
 export default Object.freeze({
   getDefaultDashboardData,
   preditNextGridPosition,
@@ -612,4 +643,5 @@ export default Object.freeze({
   getWidgetData,
   onSioMqtt,
   onUpdateWidget,
+  checkValidation,
 })

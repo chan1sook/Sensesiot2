@@ -184,6 +184,14 @@ export default {
         selectedDashboard = dashboards[0]
       }
 
+      for (const dashboard of dashboards) {
+        for (const widget of dashboard.widgets) {
+          const defaultWidgetData = getDefaultWidgetData(widget.type)
+          Object.assign(defaultWidgetData, widget)
+          Object.assign(widget, defaultWidgetData)
+        }
+      }
+
       return {
         selectedDashboardId: selectedDashboard ? selectedDashboard._id : null,
         dashboards,

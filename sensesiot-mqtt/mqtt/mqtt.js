@@ -6,7 +6,7 @@ import aedes from "aedes";
 import aedesPersistenceMongoDB from "aedes-persistence-mongodb";
 import mqemitterRedis from "mqemitter-redis";
 
-import { log } from "../utils/logging.js";
+import { error, log } from "../utils/logging.js";
 import { aedesdb } from "../database/mongodb.js";
 import bindAedesEvents from "./events.js";
 import authenticate from "./authenticate.js";
@@ -53,10 +53,16 @@ export default function startMqttService(
       payload,
     });
   });
+  eventEmitter.on("error", (err) => {
+    error(err.message, { name: "eventEmitter" });
+  });
 
   const server = net.createServer(aedesServer.handle);
   server.listen(port, () => {
     callback(port);
+  });
+  server.on("error", (err) => {
+    error(err.message, { name: "MQTTServer" });
   });
 
   return server;

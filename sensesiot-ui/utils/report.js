@@ -153,6 +153,7 @@ function generateChartDataParams(n = 5) {
         field: `dataSlot${i}`,
         label: `Dataset ${i}: Slot`,
         type: 'number',
+        min: 1,
         showIfFieldOp: ['datasetCount', '>=', i],
       }
     )
@@ -285,10 +286,6 @@ export function getConfigableReportWidgetParams(
 export function preditNextGridReportPosition(widgets = []) {
   const widgetXYs = widgets.map(
     (ele) => ele.y + ele.h - 1 + (ele.x + ele.w - 1)
-  )
-  console.log(
-    widgets.map((ele) => ({ x: ele.x, y: ele.y })),
-    widgetXYs
   )
 
   const maxXY = widgetXYs.length > 0 ? Math.max(...widgetXYs) + 1 : 0
