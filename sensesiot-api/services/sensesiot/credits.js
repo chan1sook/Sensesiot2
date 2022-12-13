@@ -156,7 +156,7 @@ async function getUsedResourceInfo(uid) {
     const result = { ...prev };
     for (let i = 0; i < widgetTypes.length; i += 1) {
       const widgetType = widgetTypes[i];
-      if (typeof prev[widgetType] === "number") {
+      if (typeof result[widgetType] === "number") {
         result[widgetType] += 1;
       } else {
         result[widgetType] = 1;
@@ -173,7 +173,7 @@ async function getUsedResourceInfo(uid) {
     const result = { ...prev };
     for (let i = 0; i < widgetTypes.length; i += 1) {
       const widgetType = widgetTypes[i];
-      if (typeof prev[widgetType] === "number") {
+      if (typeof result[widgetType] === "number") {
         result[widgetType] += 1;
       } else {
         result[widgetType] = 1;

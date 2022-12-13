@@ -6,7 +6,7 @@ import {
   getSensesiotDeviceLastestData,
   insertSensesiotDeviceData,
 } from "../services/sensesiot/data.js";
-import { log } from "../utils/logging.js";
+import { log, error } from "../utils/logging.js";
 
 const $SYS_PREFIX = "$SYS/";
 
@@ -54,12 +54,12 @@ async function handleInsertData(subtopic = "", userData = {}, payload = "") {
       name: "Set Data",
       tags: [`${uid}`, `${deviceKey}`, `${slot}`],
     });
-  } catch (error) {
-    if (error.message === "Limit Data Rate") {
+  } catch (err) {
+    if (err.message === "Limit Data Rate") {
       return;
     }
 
-    throw error;
+    throw err;
   }
 }
 
@@ -75,12 +75,12 @@ async function handleInsertControl(subtopic = "", userData = {}, payload = "") {
       name: "Set Control",
       tags: [`${uid}`, `${deviceKey}`, `${slot}`],
     });
-  } catch (error) {
-    if (error.message === "Limit Data Rate") {
+  } catch (err) {
+    if (err.message === "Limit Data Rate") {
       return;
     }
 
-    throw error;
+    throw err;
   }
 }
 
@@ -95,12 +95,13 @@ async function handleInsertControlApi(subtopic = "", payload = "") {
       name: "Set Control (API)",
       tags: [`${uid}`, `${deviceKey}`, `${slot}`],
     });
-  } catch (error) {
-    if (error.message === "Limit Data Rate") {
-      return;
-    }
-
-    throw error;
+    return true;
+  } catch (err) {
+    error(err.message, {
+      name: "Set Control (API)",
+      tags: [`${uid}`, `${deviceKey}`, `${slot}`],
+    });
+    return false;
   }
 }
 /**
@@ -157,18 +158,22 @@ export default async function authorizePublish(
           break;
         case "controlWeb":
           if (client.userData.role === "api") {
-            await handleInsertControlApi(rest.join("/"), packet.payload);
+            const isSuccess = await handleInsertControlApi(
+              rest.join("/"),
+              packet.payload
+            );
 
-            // TODO fix without deviceid schema
-            eventEmitter.emit("publishMqttApi", {
-              topic: `control/${rest.slice(1).join("/")}`,
-              payload: packet.payload,
-            });
+            if (isSuccess) {
+              eventEmitter.emit("publishMqttApi", {
+                topic: `control/${rest.slice(1).join("/")}`,
+                payload: packet.payload,
+              });
 
-            eventEmitter.emit("publishMqttApi", {
-              topic: `controlApi/${rest.join("/")}`,
-              payload: packet.payload,
-            });
+              eventEmitter.emit("publishMqttApi", {
+                topic: `controlApi/${rest.join("/")}`,
+                payload: packet.payload,
+              });
+            }
           }
           break;
         default:

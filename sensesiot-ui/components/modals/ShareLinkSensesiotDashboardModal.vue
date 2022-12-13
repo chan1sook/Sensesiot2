@@ -8,15 +8,16 @@
       <template v-if="dashboardData.publicAccess">Public</template>
       <template v-else>Private</template>
     </div>
-    <div class="mt-2">
-      <i v-if="!dashboardData.publicAccess">
-        Please change to Public to allow access dashboard.
-      </i>
-      <span
-        v-else
-        class="d-inline-flex flex-row align-items-center"
-        style="gap: 0.5em"
-      >
+    <template v-if="dashboardData.publicAccess">
+      <div class="mt-2 flex flex-row flex-wrap align-items-center">
+        <b>Dashboard Id: </b>
+        <i>{{ dashboardData._id }}</i>
+        <b-button variant="primary" @click="copyDashboardId">
+          <template v-if="copiedDashbaord">Copied</template
+          ><template v-else>Copy Id</template>
+        </b-button>
+      </div>
+      <div class="mt-2 flex flex-row flex-wrap align-items-center">
         <b>Link:</b>
         <a
           ref="noopener noreferrer"
@@ -28,10 +29,13 @@
           ></font-awesome-icon>
         </a>
         <b-button variant="primary" @click="copyLink">
-          <template v-if="copied">Copied</template
+          <template v-if="copiedLink">Copied</template
           ><template v-else>Copy Link</template>
         </b-button>
-      </span>
+      </div>
+    </template>
+    <div v-else class="mt-2">
+      <i> Please change to Public to allow access dashboard. </i>
     </div>
   </b-modal>
 </template>
@@ -53,12 +57,15 @@ export default {
   },
   data() {
     return {
-      copyId: 0,
-      copied: false,
+      copyLinkId: 0,
+      copyDashbaordId: 0,
+      copiedLink: false,
+      copiedDashbaord: false,
     }
   },
   beforeDestroy() {
-    clearTimeout(this.copyId)
+    clearTimeout(this.copyLinkId)
+    clearTimeout(this.copyDashbaordId)
   },
   methods: {
     async copyLink() {
@@ -69,10 +76,22 @@ export default {
 
       try {
         await navigator.clipboard.writeText(url.href)
-        this.copied = true
-        clearTimeout(this.copyId)
-        this.copyId = setTimeout(() => {
-          this.copied = false
+        this.copiedLink = true
+        clearTimeout(this.copyLinkId)
+        this.copyLinkId = setTimeout(() => {
+          this.copiedLink = false
+        }, 5000)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+    async copyDashboardId() {
+      try {
+        await navigator.clipboard.writeText(this.dashboardData._id)
+        this.copiedDashbaord = true
+        clearTimeout(this.copyLinkId)
+        this.copyDashbaordId = setTimeout(() => {
+          this.copiedDashbaord = false
         }, 5000)
       } catch (err) {
         console.error(err)
