@@ -73,13 +73,13 @@ import CreateSensesiotReportModal from '~/components/modals/CreateSensesiotRepor
 import DeleteSensesiotReportModal from '~/components/modals/DeleteSensesiotReportModal.vue'
 
 import { getDefaultReportData } from '~/utils/report'
-import { preditCredits } from '~/utils/utils'
+import { preditCredits, getCostableWidgets } from '~/utils/utils'
 
 export default {
   name: 'ReportPage',
   components: {
     CreateSensesiotReportModal,
-    DeleteSensesiotReportModal,
+    DeleteSensesiotReportModal
   },
   middleware: ['auth'],
   async asyncData({ $axios, store, error }) {
@@ -87,12 +87,12 @@ export default {
       const { reports } = await $axios.$get('/api/sensesiot/reports')
 
       return {
-        reports,
+        reports
       }
     } catch (err) {
       error({
         statusCode: 500,
-        message: "Can't get report data",
+        message: "Can't get report data"
       })
     }
   },
@@ -100,7 +100,7 @@ export default {
     return {
       creditInfo: {},
       reports: [],
-      modalReportData: {},
+      modalReportData: {}
     }
   },
   methods: {
@@ -137,12 +137,25 @@ export default {
         }
 
         this.$bvModal.msgBoxOk(message, {
-          title: 'Error',
+          title: 'Error'
         })
       }
     },
     async showDeleteReportModal(reportData) {
-      const { creditInfo } = await this.preditCredits({ report: -1 })
+      const costableWidgets = getCostableWidgets(reportData.widgets)
+      const widgetTypes = costableWidgets.reduce((prev, current) => {
+        if (prev[current.type]) {
+          prev[current.type] -= 1
+        } else {
+          prev[current.type] = -1
+        }
+        return prev
+      }, {})
+
+      const { creditInfo } = await this.preditCredits({
+        report: -1,
+        reportWidgets: widgetTypes
+      })
       this.creditInfo = creditInfo
       this.modalReportData = JSON.parse(JSON.stringify(reportData))
       this.$bvModal.show('modal-delete-report')
@@ -175,11 +188,11 @@ export default {
         }
 
         this.$bvModal.msgBoxOk(message, {
-          title: 'Error',
+          title: 'Error'
         })
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

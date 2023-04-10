@@ -91,41 +91,41 @@
 
 <script>
 import { sensesiotThemeOptions } from '~/utils/theme'
-import { preditCredits } from '~/utils/utils'
+import { preditCredits, getCostableWidgets } from '~/utils/utils'
 
 export default {
   name: 'CreateSensesiotDashboardModal',
   props: {
     id: {
       type: String,
-      required: true,
+      required: true
     },
     dashboardData: {
       type: Object,
       default() {
         return {}
-      },
+      }
     },
     creditInfo: {
       type: Object,
       default() {
         return {}
-      },
-    },
+      }
+    }
   },
   data() {
     return {
       modalDashboardData: {
         name: '',
         publicAccess: false,
-        theme: 'default',
+        theme: 'default'
       },
       template: 'empty',
       templateFrom: '',
       templateKeepDeviceSlot: false,
       templateChecked: null,
       templateCreditInfo: null,
-      templateDashboardData: null,
+      templateDashboardData: null
     }
   },
   computed: {
@@ -156,7 +156,7 @@ export default {
         return this.templateCreditInfo
       }
       return this.creditInfo
-    },
+    }
   },
   watch: {
     dashboardData: {
@@ -164,7 +164,7 @@ export default {
       handler(value) {
         this.modalDashboardData = JSON.parse(JSON.stringify(value))
         this.template = 'empty'
-      },
+      }
     },
     template(value) {
       this.templateChecked = null
@@ -175,7 +175,7 @@ export default {
       if (value) {
         this.checkTemplatePublic(value)
       }
-    },
+    }
   },
   methods: {
     async checkTemplatePublic(id) {
@@ -184,7 +184,8 @@ export default {
           `/api/sensesiot/dashboard/${id}`
         )
         // check credits
-        const widgetTypes = dashboard.widgets.reduce((prev, current) => {
+        const costableWidgets = getCostableWidgets(dashboard.widgets)
+        const widgetTypes = costableWidgets.reduce((prev, current) => {
           if (prev[current.type]) {
             prev[current.type] += 1
           } else {
@@ -194,7 +195,7 @@ export default {
         }, {})
         const { creditInfo } = await preditCredits(this.$axios, {
           dashboard: 1,
-          widgets: widgetTypes,
+          widgets: widgetTypes
         })
         this.templateCreditInfo = creditInfo
         this.templateDashboardData = dashboard
@@ -228,8 +229,8 @@ export default {
         }
       }
       this.$emit('ok', data)
-    },
-  },
+    }
+  }
 }
 </script>
 

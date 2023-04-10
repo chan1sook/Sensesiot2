@@ -9,6 +9,7 @@ import {
   mintCoin,
 } from "../../services/shop.js";
 import { getUserInfo } from "../../services/user.js";
+import { isDevRole } from "../../utils/roles.js";
 
 const router = Router();
 
@@ -50,7 +51,7 @@ router.post("/shop/buy", json(), async (req, res) => {
     }
 
     const userInfo = await getUserInfo(req.session.userData.uid);
-    if (userInfo.role === "developer") {
+    if (isDevRole(userInfo.role)) {
       const transaction = await createTransaction(
         userInfo.uid,
         req.body.productId,

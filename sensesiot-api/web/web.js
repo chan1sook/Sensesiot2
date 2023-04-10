@@ -1,5 +1,7 @@
 import EventEmitter from "events";
 import express from "express";
+import cors from "cors";
+import helmet from "helmet";
 import { createServer } from "http";
 import { createClient } from "redis";
 import { Server as SIOServer } from "socket.io";
@@ -30,6 +32,17 @@ export default function startWebService(
   const sessionMiddleware = session(redisClient);
 
   app.use(sessionMiddleware);
+
+  if (process.env.NODE_ENV !== "production") {
+    app.use(
+      cors({
+        origin: true,
+      })
+    );
+  } else {
+    app.use(cors());
+  }
+  app.use(helmet({}));
 
   app.use((req, res, next) => {
     req.eventEmitter = eventEmitter;

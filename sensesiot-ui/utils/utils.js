@@ -26,8 +26,13 @@ export async function preditCredits($axios, additionList = {}) {
   return { creditInfo, costs }
 }
 
+export function getCostableWidgets(widgets) {
+  return widgets.filter((ele) => !ele.isFree)
+}
+
 export default Object.freeze({
   truncate,
   getSupportMarkdownDescription,
   preditCredits,
+  getCostableWidgets,
 })

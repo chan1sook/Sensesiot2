@@ -1,19 +1,20 @@
 import { auth } from "../firebase/firebase-admin.js";
 import { sensesiotBase } from "../database/mongodb.js";
 import { log } from "../utils/logging.js";
+import { DEVELOPER_ROLE, USER_ROLE, GUEST_ROLE } from "../utils/roles.js";
 import devuserUids from "../firebase/devuseruid.js";
 
 const initCoins = 0;
 
 export async function initDevUsers() {
   const usersCol = sensesiotBase.collection("users");
-  const devUsersCount = await usersCol.countDocuments({ role: "developer" });
+  const devUsersCount = await usersCol.countDocuments({ role: DEVELOPER_ROLE });
   if (devUsersCount === 0) {
     log("Insert Dev Users", { name: "Init" });
     await usersCol.insertMany(
       devuserUids.map((uid) => ({
         uid,
-        role: "developer",
+        role: DEVELOPER_ROLE,
         coins: initCoins,
         firstLoginTime: null,
         lastestLoginTime: null,
@@ -42,7 +43,7 @@ export async function getUserInfo(uid) {
   if (!userInfo) {
     userInfo = {
       uid,
-      role: "user",
+      role: USER_ROLE,
       coins: initCoins,
       createTime: new Date(),
       lastestUpdateTime: new Date(),
@@ -55,7 +56,7 @@ export async function getUserInfo(uid) {
 
   if (!userInfo) {
     return {
-      role: "guest",
+      role: GUEST_ROLE,
     };
   }
 

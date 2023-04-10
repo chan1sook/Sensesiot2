@@ -5,6 +5,7 @@ import objectHash from "object-hash";
 
 import { error } from "../../utils/logging.js";
 import WebError from "../../utils/weberror.js";
+import { isDevRole, } from "../../utils/roles.js";
 import {
   createSensesiotNews,
   getSensesiotNews,
@@ -91,7 +92,7 @@ router.post("/news/add", upload.single("imageFile"), async (req, res) => {
     }
 
     const userInfo = await getUserInfo(req.session.userData.uid);
-    if (userInfo.role !== "developer") {
+    if (!isDevRole(userInfo.role)) {
       throw new WebError("Forbidden", 403);
     }
 
@@ -168,7 +169,7 @@ router.post(
       }
 
       const userInfo = await getUserInfo(req.session.userData.uid);
-      if (userInfo.role !== "developer") {
+      if (!isDevRole(userInfo.role)) {
         throw new WebError("Forbidden", 403);
       }
 
@@ -254,7 +255,7 @@ router.post("/news/delete/:id", async (req, res) => {
     }
 
     const userInfo = await getUserInfo(req.session.userData.uid);
-    if (userInfo.role !== "developer") {
+    if (!isDevRole(userInfo.role)) {
       throw new WebError("Forbidden", 403);
     }
 

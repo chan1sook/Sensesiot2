@@ -99,7 +99,7 @@ export default {
   components: {
     CreateSensesiotDeviceModal,
     EditSensesiotDeviceModal,
-    DeleteSensesiotDeviceModal,
+    DeleteSensesiotDeviceModal
   },
   middleware: ['auth'],
   async asyncData({ $axios, store, error }) {
@@ -107,12 +107,12 @@ export default {
       const { devices } = await $axios.$get('/api/sensesiot/devices')
 
       return {
-        devices,
+        devices
       }
     } catch (err) {
       error({
         statusCode: 500,
-        message: "Can't get device data",
+        message: "Can't get device data"
       })
     }
   },
@@ -123,8 +123,8 @@ export default {
       devices: [],
       modalDeviceData: {
         name: '',
-        model: '',
-      },
+        model: ''
+      }
     }
   },
   computed: {
@@ -133,14 +133,14 @@ export default {
         'deviceKey',
         {
           key: 'name',
-          sortable: true,
+          sortable: true
         },
         {
           key: 'model',
-          sortable: true,
+          sortable: true
         },
         'lastestUpdateTime',
-        'actions',
+        'actions'
       ]
     },
     filterDevices() {
@@ -150,7 +150,7 @@ export default {
           ele.name.includes(this.keyword) ||
           ele.model.includes(this.keyword)
       )
-    },
+    }
   },
   methods: {
     preditCredits(additionList = {}) {
@@ -182,26 +182,26 @@ export default {
         }
 
         this.$bvModal.msgBoxOk(message, {
-          title: 'Error',
+          title: 'Error'
         })
       }
     },
     showEditDeviceModal({ item: deviceData }) {
       this.modalDeviceData = {
         ...getDefaultDeviceData(),
-        ...deviceData,
+        ...deviceData
       }
       this.$bvModal.show('modal-edit-device')
     },
     async editDevice(deviceData) {
-      if (!this.deviceData._id) {
+      if (!deviceData._id) {
         return
       }
 
       try {
         const deviceId = deviceData._id
         const editData = {
-          ...deviceData,
+          ...deviceData
         }
         delete editData._id
 
@@ -228,22 +228,21 @@ export default {
         }
 
         this.$bvModal.msgBoxOk(message, {
-          title: 'Error',
+          title: 'Error'
         })
       }
     },
     async showDeleteDeviceModal({ item: deviceData }) {
       this.modalDeviceData = {
         ...getDefaultDeviceData(),
-        ...deviceData,
+        ...deviceData
       }
 
       const { creditInfo } = await this.preditCredits({
-        device: -1,
+        device: -1
       })
       this.creditInfo = creditInfo
       this.$bvModal.show('modal-delete-device')
-      this.$bvModal.show('modal-edit-device')
     },
     async deleteDevice(deviceId) {
       if (!deviceId) {
@@ -269,7 +268,7 @@ export default {
         }
 
         this.$bvModal.msgBoxOk(message, {
-          title: 'Error',
+          title: 'Error'
         })
       }
     },
@@ -279,8 +278,8 @@ export default {
       } catch (err) {
         console.error(err)
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

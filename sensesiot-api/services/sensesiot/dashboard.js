@@ -2,6 +2,7 @@
 import { ObjectId } from "mongodb";
 import { sensesiotV2 } from "../../database/mongodb.js";
 import {
+  getCostableWidgets,
   preditNewCredit,
   preditReplaceDashboardWidgetsCredit,
 } from "./credits.js";
@@ -65,7 +66,7 @@ export async function createSensesiotDashboard(
 export async function updateSensesiotDashboard(uid, dashboardId, data) {
   const widgets = Array.isArray(data.widgets) ? data.widgets : [];
 
-  const widgetsLength = widgets.reduce((prev, current) => {
+  const widgetsLength = getCostableWidgets(widgets).reduce((prev, current) => {
     const result = { ...prev };
     if (result[current.type]) {
       result[current.type] += 1;

@@ -53,6 +53,10 @@ async function getCostInfo(name) {
   return costDocs.length > 0 ? costDocs[0] : null;
 }
 
+export function getCostableWidgets(widgets) {
+  return widgets.filter((ele) => !ele.isFree)
+}
+
 export async function initSensesiotCreditCosts() {
   const costCol = sensesiotV2.collection("costs");
 
@@ -152,7 +156,8 @@ async function getUsedResourceInfo(uid) {
   const dashboardsLength = dashboards.length;
 
   const widgetsLength = dashboards.reduce((prev, current) => {
-    const widgetTypes = current.widgets.map((ele) => ele.type);
+    const costableWidgets = getCostableWidgets(current.widgets);
+    const widgetTypes = costableWidgets.map((ele) => ele.type);
     const result = { ...prev };
     for (let i = 0; i < widgetTypes.length; i += 1) {
       const widgetType = widgetTypes[i];
@@ -169,7 +174,8 @@ async function getUsedResourceInfo(uid) {
   const devicesLength = devices.length;
   const reportsLength = reports.length;
   const reportWidgetsLength = reports.reduce((prev, current) => {
-    const widgetTypes = current.widgets.map((ele) => ele.type);
+    const costableWidgets = getCostableWidgets(current.widgets);
+    const widgetTypes = costableWidgets.map((ele) => ele.type);
     const result = { ...prev };
     for (let i = 0; i < widgetTypes.length; i += 1) {
       const widgetType = widgetTypes[i];
@@ -282,7 +288,8 @@ export async function getSensesiotUsedCredits(uid) {
 
 function groupWidgetKeys(info, widgets, groupKey = "widgetsLength") {
   const newInfo = info;
-  const widgetKeys = Object.keys(widgets);
+  const costableWidgets = getCostableWidgets(widgets);
+  const widgetKeys = Object.keys(costableWidgets);
   for (let i = 0; i < widgetKeys.length; i += 1) {
     const key = widgetKeys[i];
     if (typeof newInfo[groupKey][key] === "number") {
@@ -332,7 +339,7 @@ export async function preditNewCredit(
 export async function preditReplaceDashboardWidgetsCredit(
   uid,
   dashboardId,
-  widgets = {}
+  widgetsLength = {}
 ) {
   const usersCol = sensesiotV2.collection("users");
   const userInfo = await usersCol.findOne({ uid });
@@ -346,8 +353,9 @@ export async function preditReplaceDashboardWidgetsCredit(
     _id: ObjectId(dashboardId),
   });
 
-  for (let i = 0; i < targetDashboard.widgets.length; i += 1) {
-    const key = targetDashboard.widgets[i].type;
+  const targetCostableWidgets = getCostableWidgets(targetDashboard.widgets);
+  for (let i = 0; i < targetCostableWidgets.length; i += 1) {
+    const key = targetCostableWidgets[i].type;
     if (typeof newInfo.widgetsLength[key] === "number") {
       newInfo.widgetsLength[key] -= 1;
     } else {
@@ -355,13 +363,14 @@ export async function preditReplaceDashboardWidgetsCredit(
     }
   }
 
-  const keys = Object.keys(widgets);
+  
+  const keys = Object.keys(widgetsLength);
   for (let i = 0; i < keys.length; i += 1) {
     const key = keys[i];
     if (typeof newInfo.widgetsLength[key] === "number") {
-      newInfo.widgetsLength[key] += widgets[key];
+      newInfo.widgetsLength[key] += widgetsLength[key];
     } else {
-      newInfo.widgetsLength[key] = widgets[key];
+      newInfo.widgetsLength[key] = widgetsLength[key];
     }
   }
 
@@ -426,6 +435,7 @@ export async function preditReplaceReportWidgetsCredit(
 export default Object.freeze({
   costIdentifyNames,
   getCostInfos,
+  getCostableWidgets,
   initSensesiotCreditCosts,
   getSensesiotUsedCredits,
   preditNewCredit,

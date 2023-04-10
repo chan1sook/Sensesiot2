@@ -23,47 +23,11 @@
             Create News
           </b-button>
         </div>
-        <div
-          class="d-flex flex-row flex-wrap align-items-center"
-          style="gap: 0.5em"
-        >
-          <b-button
-            variant="primary"
-            title="First page"
-            :disabled="page === 1"
-            @click="setPage(1)"
-          >
-            <font-awesome-icon :icon="['fas', 'fa-angles-left']" />
-          </b-button>
-          <b-button
-            variant="primary"
-            title="Prev page"
-            :disabled="page === 1"
-            @click="setPage(page - 1)"
-          >
-            <font-awesome-icon :icon="['fas', 'fa-angle-left']" />
-          </b-button>
-          <div class="flex-fill text-center">
-            Page: {{ page }} / {{ totalPages }}
-          </div>
-          <b-button
-            variant="primary"
-            title="Next page"
-            :disabled="page === totalPages"
-            @click="setPage(page + 1)"
-          >
-            <font-awesome-icon :icon="['fas', 'fa-angle-right']" />
-          </b-button>
-          <b-button
-            variant="primary"
-            title="Last page"
-            :disabled="page === totalPages"
-            @click="setPage(totalPages)"
-          >
-            <font-awesome-icon :icon="['fas', 'fa-angles-right']" />
-          </b-button>
-          <b-button @click="popupSetPage"> Go to... </b-button>
-        </div>
+        <PagesControl
+          :value="page"
+          :total="totalPages"
+          @change-page="setPage"
+        ></PagesControl>
         <b-card
           v-for="currentNews of filterNewsPage"
           :key="currentNews._id"
@@ -137,6 +101,7 @@
 </template>
 
 <script>
+import PagesControl from '~/components/PagesControl.vue'
 import AddSensesiotNewsModal from '~/components/modals/AddSensesiotNewsModal.vue'
 import DeleteSensesiotNewsModal from '~/components/modals/DeleteSensesiotNewsModal.vue'
 import { sortNews, getDefaultNewsData } from '~/utils/news'
@@ -144,8 +109,9 @@ import { sortNews, getDefaultNewsData } from '~/utils/news'
 export default {
   name: 'NewsAdminPage',
   components: {
+    PagesControl,
     AddSensesiotNewsModal,
-    DeleteSensesiotNewsModal,
+    DeleteSensesiotNewsModal
   },
   middleware: ['authDev'],
   async asyncData({ $axios, error }) {
@@ -153,12 +119,12 @@ export default {
       const { news } = await $axios.$get('/api/news')
       news.sort(sortNews)
       return {
-        news,
+        news
       }
     } catch (err) {
       error({
         statusCode: 500,
-        message: "Can't get user stats info",
+        message: "Can't get news"
       })
     }
   },
@@ -167,10 +133,10 @@ export default {
       news: [],
       modalNewsData: getDefaultNewsData(),
       filters: {
-        published: 'all',
+        published: 'all'
       },
       page: 1,
-      itemPerPage: 10,
+      itemPerPage: 10
     }
   },
   computed: {
@@ -178,16 +144,16 @@ export default {
       return [
         {
           text: 'All',
-          value: 'all',
+          value: 'all'
         },
         {
           text: 'Published',
-          value: 'published',
+          value: 'published'
         },
         {
           text: 'Private',
-          value: 'private',
-        },
+          value: 'private'
+        }
       ]
     },
     totalPages() {
@@ -211,18 +177,9 @@ export default {
         this.itemPerPage * (this.page - 1),
         this.itemPerPage * this.page
       )
-    },
+    }
   },
   methods: {
-    popupSetPage() {
-      const input = prompt(`Enter page (1 - ${this.totalPages})`)
-      if (input) {
-        const nthPage = parseInt(input, 10)
-        if (Number.isInteger(nthPage) && nthPage > 0) {
-          this.setPage(nthPage)
-        }
-      }
-    },
     setPage(page) {
       this.page = Math.max(Math.min(page, this.totalPages), 1)
     },
@@ -236,7 +193,6 @@ export default {
     },
     async createNews(news) {
       try {
-        // replaceTo
         const addData = new FormData()
         const keys = Object.keys(news)
         for (const key of keys) {
@@ -264,7 +220,7 @@ export default {
         }
 
         this.$bvModal.msgBoxOk(message, {
-          title: 'Error',
+          title: 'Error'
         })
       }
     },
@@ -296,10 +252,10 @@ export default {
         }
 
         this.$bvModal.msgBoxOk(message, {
-          title: 'Error',
+          title: 'Error'
         })
       }
-    },
-  },
+    }
+  }
 }
 </script>

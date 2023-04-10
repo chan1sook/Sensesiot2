@@ -2,6 +2,7 @@ import { Router, json } from "express";
 
 import { error } from "../../utils/logging.js";
 import WebError from "../../utils/weberror.js";
+import { GUEST_ROLE } from "../../utils/roles.js";
 import {
   decodeFirebaseAuthToken,
   getUserInfo,
@@ -71,7 +72,7 @@ router.get("/user", async (req, res) => {
     res.status(200).json({
       status: "OK",
       userData: {
-        role: "guest",
+        role: GUEST_ROLE,
       },
     });
   } catch (err) {

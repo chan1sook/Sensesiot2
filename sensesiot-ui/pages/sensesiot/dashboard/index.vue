@@ -154,10 +154,10 @@ import {
   getDefaultWidgetData,
   getWidgetData,
   onSioMqtt,
-  onUpdateWidget,
+  onUpdateWidget
 } from '~/utils/dashboard'
 import { getThemeSetting } from '~/utils/theme'
-import { preditCredits } from '~/utils/utils'
+import { preditCredits, getCostableWidgets } from '~/utils/utils'
 
 export default {
   name: 'DashboardPage',
@@ -167,7 +167,7 @@ export default {
     DeleteSensesiotDashboardModal,
     ShareLinkSensesiotDashboardModal,
     AddSensesiotWidgetModal,
-    ConfigSensesiotWidgetModal,
+    ConfigSensesiotWidgetModal
   },
   mixins: [SocketIOMixin],
   middleware: ['auth'],
@@ -194,12 +194,12 @@ export default {
 
       return {
         selectedDashboardId: selectedDashboard ? selectedDashboard._id : null,
-        dashboards,
+        dashboards
       }
     } catch (err) {
       error({
         statusCode: 500,
-        message: "Can't get dashboard data",
+        message: "Can't get dashboard data"
       })
     }
   },
@@ -215,14 +215,14 @@ export default {
       creditCosts: {},
       editDashboardData: {},
       editWidgetData: {},
-      modalDashboardData: {},
+      modalDashboardData: {}
     }
   },
   computed: {
     dashboardOptions() {
       return this.dashboards.map((dashboard) => ({
         text: dashboard.name || dashboard._id,
-        value: dashboard._id,
+        value: dashboard._id
       }))
     },
     selectedDashboard() {
@@ -253,16 +253,16 @@ export default {
     },
     isEditDashboardDataValid() {
       return this.editDashboardData.name !== ''
-    },
+    }
   },
   watch: {
     selectedDashboardId(value) {
       this.$store.dispatch('updateSensesiotPreferences', {
-        lastOpenedDashboard: value,
+        lastOpenedDashboard: value
       })
 
       this.refreshDashboardData()
-    },
+    }
   },
   mounted() {
     window.addEventListener('beforeunload', this.onBeforeUnload)
@@ -309,7 +309,7 @@ export default {
       this.socketio.emit('controlDevice', {
         deviceKey: metadata.controlDevice,
         slot: metadata.controlSlot,
-        data: metadata.state,
+        data: metadata.state
       })
     },
     async getDevices() {
@@ -352,7 +352,7 @@ export default {
         }
 
         this.$bvModal.msgBoxOk(message, {
-          title: 'Error',
+          title: 'Error'
         })
       }
     },
@@ -361,20 +361,20 @@ export default {
 
       this.editDashboardData = {
         ...getDefaultDashboardData(),
-        ...JSON.parse(JSON.stringify(this.selectedDashboard)),
+        ...JSON.parse(JSON.stringify(this.selectedDashboard))
       }
     },
     showEditDashboardModal() {
       this.modalDashboardData = {
         ...getDefaultDashboardData(),
-        ...JSON.parse(JSON.stringify(this.editDashboardData)),
+        ...JSON.parse(JSON.stringify(this.editDashboardData))
       }
       this.$bvModal.show('modal-edit-dashboard')
     },
     applyToEditDashboardData(dashboardData) {
       this.editDashboardData = {
         ...this.editDashboardData,
-        ...JSON.parse(JSON.stringify(dashboardData)),
+        ...JSON.parse(JSON.stringify(dashboardData))
       }
     },
     async showEditWidgetModal(widget) {
@@ -411,7 +411,10 @@ export default {
       }
     },
     async showAddWidgetModal() {
-      const widgetTypesDiff = this.selectedDashboard.widgets.reduce(
+      const selectedCostableWidgets = getCostableWidgets(
+        this.selectedDashboard.widgets
+      )
+      const widgetTypesDiff = selectedCostableWidgets.reduce(
         (prev, current) => {
           if (prev[current.type]) {
             prev[current.type] -= 1
@@ -422,7 +425,11 @@ export default {
         },
         {}
       )
-      this.editDashboardData.widgets.reduce((prev, current) => {
+
+      const editedCostableWidgets = getCostableWidgets(
+        this.editDashboardData.widgets
+      )
+      editedCostableWidgets.reduce((prev, current) => {
         if (prev[current.type]) {
           prev[current.type] += 1
         } else {
@@ -432,7 +439,7 @@ export default {
       }, widgetTypesDiff)
 
       const { costs, creditInfo } = await this.preditCredits({
-        widgets: widgetTypesDiff,
+        widgets: widgetTypesDiff
       })
 
       this.creditInfo = creditInfo
@@ -448,7 +455,7 @@ export default {
         y,
         w: 1,
         h: 1,
-        ...getDefaultWidgetData(type),
+        ...getDefaultWidgetData(type)
       }
 
       this.editDashboardData.widgets.push(newWidgetData)
@@ -465,7 +472,7 @@ export default {
       try {
         const dashboardId = this.editDashboardData._id
         const editData = {
-          ...this.editDashboardData,
+          ...this.editDashboardData
         }
         delete editData._id
         for (const widget of editData.widgets) {
@@ -502,12 +509,13 @@ export default {
         }
 
         this.$bvModal.msgBoxOk(message, {
-          title: 'Error',
+          title: 'Error'
         })
       }
     },
     async showDeleteDashboardModal() {
-      const widgets = this.selectedDashboard.widgets.reduce((prev, current) => {
+      const costableWidgets = getCostableWidgets(this.selectedDashboard.widgets)
+      const widgetTypes = costableWidgets.reduce((prev, current) => {
         if (prev[current.type]) {
           prev[current.type] -= 1
         } else {
@@ -517,8 +525,8 @@ export default {
       }, {})
 
       const { creditInfo } = await this.preditCredits({
-        widgets,
-        dashboard: -1,
+        widgets: widgetTypes,
+        dashboard: -1
       })
       this.creditInfo = creditInfo
       this.$bvModal.show('modal-delete-dashboard')
@@ -565,14 +573,14 @@ export default {
         }
 
         this.$bvModal.msgBoxOk(message, {
-          title: 'Error',
+          title: 'Error'
         })
       }
     },
     showShareLinkDashboardModal() {
       this.modalDashboardData = {
         ...getDefaultDashboardData(),
-        ...JSON.parse(JSON.stringify(this.selectedDashboard)),
+        ...JSON.parse(JSON.stringify(this.selectedDashboard))
       }
       this.$bvModal.show('modal-share-link-dashboard')
     },
@@ -585,7 +593,7 @@ export default {
           okTitle: 'Yes',
           cancelTitle: 'No',
           hideHeaderClose: false,
-          centered: true,
+          centered: true
         }
       )
 
@@ -598,8 +606,8 @@ export default {
         ev.preventDefault()
         return 'Are you sure you want to exit?'
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

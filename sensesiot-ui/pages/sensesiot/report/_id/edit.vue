@@ -88,18 +88,18 @@ import { v4 as uuidv4 } from 'uuid'
 import AddSensesiotReportWidgetModal from '~/components/modals/AddSensesiotReportWidgetModal.vue'
 import ConfigSensesiotWidgetModal from '~/components/modals/ConfigSensesiotWidgetModal.vue'
 
-import { preditCredits } from '~/utils/utils'
+import { preditCredits, getCostableWidgets } from '~/utils/utils'
 import {
   getDefaultReportWidgetData,
   preditNextGridReportPosition,
-  getConfigableReportWidgetParams,
+  getConfigableReportWidgetParams
 } from '~/utils/report'
 import { getThemeSetting, sensesiotThemeOptions } from '~/utils/theme'
 export default {
   name: 'ReportEditPage',
   components: {
     AddSensesiotReportWidgetModal,
-    ConfigSensesiotWidgetModal,
+    ConfigSensesiotWidgetModal
   },
   middleware: ['auth'],
   async asyncData({ $axios, params, error }) {
@@ -108,12 +108,12 @@ export default {
 
       return {
         report,
-        editReportData: JSON.parse(JSON.stringify(report)),
+        editReportData: JSON.parse(JSON.stringify(report))
       }
     } catch (err) {
       error({
         statusCode: 500,
-        message: "Can't get report data",
+        message: "Can't get report data"
       })
     }
   },
@@ -125,7 +125,7 @@ export default {
       reportData: [],
       devices: [],
       editReportData: {},
-      editWidgetData: {},
+      editWidgetData: {}
     }
   },
   computed: {
@@ -137,7 +137,7 @@ export default {
     },
     themeStyle() {
       return getThemeSetting(this.editReportData.theme)
-    },
+    }
   },
   mounted() {
     window.addEventListener('beforeunload', this.onBeforeUnload)
@@ -155,7 +155,8 @@ export default {
       return devices
     },
     async showAddWidgetModal() {
-      const widgetTypesDiff = this.report.widgets.reduce((prev, current) => {
+      const reportCostableWidgets = getCostableWidgets(this.report.widgets)
+      const widgetTypesDiff = reportCostableWidgets.reduce((prev, current) => {
         if (prev[current.type]) {
           prev[current.type] -= 1
         } else {
@@ -164,7 +165,10 @@ export default {
         return prev
       }, {})
 
-      this.editReportData.widgets.reduce((prev, current) => {
+      const editedCostableWidgets = getCostableWidgets(
+        this.editReportData.widgets
+      )
+      editedCostableWidgets.reduce((prev, current) => {
         if (prev[current.type]) {
           prev[current.type] += 1
         } else {
@@ -174,7 +178,7 @@ export default {
       }, widgetTypesDiff)
 
       const { costs, creditInfo } = await this.preditCredits({
-        reportWidgets: widgetTypesDiff,
+        reportWidgets: widgetTypesDiff
       })
 
       this.creditInfo = creditInfo
@@ -191,7 +195,7 @@ export default {
         y,
         w: 1,
         h: 1,
-        ...getDefaultReportWidgetData(type),
+        ...getDefaultReportWidgetData(type)
       }
 
       this.editReportData.widgets.push(newWidgetData)
@@ -233,7 +237,7 @@ export default {
       try {
         const reportId = this.editReportData._id
         const editData = {
-          ...this.editReportData,
+          ...this.editReportData
         }
         delete editData._id
         for (const widget of editData.widgets) {
@@ -265,7 +269,7 @@ export default {
         }
 
         this.$bvModal.msgBoxOk(message, {
-          title: 'Error',
+          title: 'Error'
         })
       }
     },
@@ -278,7 +282,7 @@ export default {
           okTitle: 'Yes',
           cancelTitle: 'No',
           hideHeaderClose: false,
-          centered: true,
+          centered: true
         }
       )
 
@@ -289,8 +293,8 @@ export default {
     onBeforeUnload(ev) {
       ev.preventDefault()
       return 'Are you sure you want to exit?'
-    },
-  },
+    }
+  }
 }
 </script>
 

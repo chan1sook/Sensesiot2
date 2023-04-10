@@ -37,7 +37,7 @@ export async function getSensesiotNewsById(newsId) {
   });
 
   if (!newsDoc) {
-    throw new Error("No Redeem Code Found");
+    throw new Error("No News Found");
   }
   newsDoc.publicImgUrl = sensesiotBucket()
     .file(pathJoinBucket("newsImages", newsDoc.imgSrc))
