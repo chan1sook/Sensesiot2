@@ -82,10 +82,10 @@ export default {
   },
   data() {
     return {
-      loading: true,
+      loading: false,
       registerMode: false,
       email: '',
-      password: '',
+      password: ''
     }
   },
   computed: {
@@ -109,10 +109,7 @@ export default {
     },
     isFormValid() {
       return this.isEmailValid && this.isPasswordValid
-    },
-  },
-  mounted() {
-    this.googleAuthRedirect()
+    }
   },
   methods: {
     async submitForm() {
@@ -147,29 +144,29 @@ export default {
         this.handleError(error)
       }
     },
-    googleAuth() {
-      const provider = new this.$fireModule.auth.GoogleAuthProvider()
-      this.$fire.auth.useDeviceLanguage()
-      this.$fire.auth.signInWithRedirect(provider)
-    },
-    async googleAuthRedirect() {
+    async googleAuth() {
+      if (this.loading) {
+        return
+      }
+
+      this.loading = true
       try {
-        const result = await this.$fire.auth.getRedirectResult()
-        if (result.credential) {
-          const user = result.user
-          this.setUserServer(user)
-        } else {
-          this.loading = false
+        const provider = new this.$fireModule.auth.GoogleAuthProvider()
+        this.$fire.auth.useDeviceLanguage()
+        const user = await this.$fire.auth.signInWithPopup(provider)
+        if (user.credential) {
+          this.setUserServer(user.user)
         }
-      } catch (error) {
-        this.handleError(error)
+      } catch (err) {
+        this.handleError(err)
+        this.loading = false
       }
     },
     async setUserServer(user) {
       const token = await user.getIdToken()
 
       const { userData } = await this.$axios.$post('/api/login', {
-        token,
+        token
       })
 
       this.$store.commit('SET_USER', userData)
@@ -188,7 +185,7 @@ export default {
         const user = userCredential.user
         user.sendEmailVerification()
         this.$bvModal.msgBoxOk('Email verification sent, Please activate.', {
-          title: 'Register',
+          title: 'Register'
         })
       } catch (error) {
         this.handleError(error)
@@ -209,7 +206,7 @@ export default {
         this.$bvModal.msgBoxOk(
           'The email address is already in use by another account.',
           {
-            title: 'Error',
+            title: 'Error'
           }
         )
       } else if (
@@ -217,13 +214,13 @@ export default {
         errorCode === 'auth/wrong-password'
       ) {
         this.$bvModal.msgBoxOk('Invalid User/Password', {
-          title: 'Error',
+          title: 'Error'
         })
       } else if (errorCode === 'auth/email-not-verified') {
         this.$bvModal.msgBoxOk(
           'This email not verified, Please verifiy first',
           {
-            title: 'Error',
+            title: 'Error'
           }
         )
       } else {
@@ -237,10 +234,10 @@ export default {
         }
 
         this.$bvModal.msgBoxOk(`[${errorCode}] : ${errorMessage}`, {
-          title: 'Error',
+          title: 'Error'
         })
       }
-    },
-  },
+    }
+  }
 }
 </script>
