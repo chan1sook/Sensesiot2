@@ -32,6 +32,9 @@
               <b-dropdown-divider></b-dropdown-divider>
               <b-dropdown-item href="/sensesiot/shop"> Shops </b-dropdown-item>
             </b-nav-item-dropdown>
+            <template v-if="isManager">
+              <b-nav-item href="/ads">Ads</b-nav-item>
+            </template>
             <template v-if="isDev">
               <b-nav-item-dropdown right>
                 <template #button-content> Dev Menu </template>
@@ -132,7 +135,7 @@ import { sortNews } from '~/utils/news'
 
 export default {
   components: {
-    SensesiotNewsModal,
+    SensesiotNewsModal
   },
   data() {
     return {
@@ -140,12 +143,15 @@ export default {
       avaliableNews: false,
       skipPopupToday: false,
       news: [],
-      newsOffset: 0,
+      newsOffset: 0
     }
   },
   computed: {
     isLogin() {
       return this.$store.getters.role !== 'guest'
+    },
+    isManager() {
+      return ['developer', 'adsmanager'].includes(this.$store.getters.role)
     },
     isDev() {
       return this.$store.getters.role === 'developer'
@@ -196,7 +202,7 @@ export default {
     },
     isSensesiotPages() {
       return this.$route.path.startsWith('/sensesiot')
-    },
+    }
   },
   mounted() {
     this.triggerShowNews()
@@ -209,7 +215,7 @@ export default {
         const newsInfo = {
           skipShowBefore: Date.now(),
           lastestNews: null,
-          offset: 0,
+          offset: 0
         }
 
         if (rawNewsInfo) {
@@ -268,7 +274,7 @@ export default {
       const newsInfo = {
         skipShowBefore: Date.now(),
         lastestNews: this.news[0] ? this.news[0]._id : null,
-        offset: this.newsOffset || 0,
+        offset: this.newsOffset || 0
       }
       if (skipPopupToday) {
         newsInfo.skipShowBefore = dayjs()
@@ -280,8 +286,8 @@ export default {
           .valueOf()
       }
       window.localStorage.setItem('sensesiot-news', JSON.stringify(newsInfo))
-    },
-  },
+    }
+  }
 }
 </script>
 

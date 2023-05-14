@@ -19,11 +19,13 @@ export async function init() {
 
 export const sensesiotBase = mongodb.db(dbNameOf("sensesiotBase"));
 export const sensesiotStats = mongodb.db(dbNameOf("sensesiotStats"));
+export const sensesiotAds = mongodb.db(dbNameOf("sensesiotAds"));
 export const sensesiotV2 = mongodb.db(dbNameOf("sensesiotV2"));
 
 export default Object.freeze({
   init,
   sensesiotBase,
   sensesiotStats,
+  sensesiotAds,
   sensesiotV2,
 });
