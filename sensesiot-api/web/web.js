@@ -10,6 +10,7 @@ import { error, log } from "../utils/logging.js";
 import session from "./session.js";
 import indexRouter from "./routers/index.js";
 import sensesiotRouter from "./routers/sensesiot/index.js";
+import adsRouter from "./routers/ads/index.js";
 
 function webDefaultCallback(port = 8080) {
   log([`Start at port `, `${port}`.green], { name: "Web" });
@@ -51,6 +52,7 @@ export default function startWebService(
 
   app.use(indexRouter);
   app.use(sensesiotRouter);
+  app.use(adsRouter);
 
   const socketIOServer = new SIOServer(httpServer);
   socketIOServer.use((socket, next) =>
