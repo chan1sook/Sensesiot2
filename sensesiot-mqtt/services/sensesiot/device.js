@@ -7,6 +7,14 @@ export async function getSensesiotDevice(uid, deviceKey) {
   return device;
 }
 
+export async function getSensesiotDeviceKey(deviceKey) {
+  const deviceCol = sensesiotV2.collection("devices");
+
+  const device = await deviceCol.findOne({ deviceKey });
+  return device;
+}
+
 export default Object.freeze({
   getSensesiotDevice,
+  getSensesiotDeviceKey,
 });

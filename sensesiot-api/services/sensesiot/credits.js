@@ -53,8 +53,8 @@ async function getCostInfo(name) {
   return costDocs.length > 0 ? costDocs[0] : null;
 }
 
-export function getCostableWidgets(widgets) {
-  return widgets.filter((ele) => !ele.isFree)
+export function getCostableWidgets(widgets = []) {
+  return widgets.filter((ele) => !ele.isFree);
 }
 
 export async function initSensesiotCreditCosts() {
@@ -286,10 +286,9 @@ export async function getSensesiotUsedCredits(uid) {
   return computeUsedCredits(creditCostDocs, resourceInfo);
 }
 
-function groupWidgetKeys(info, widgets, groupKey = "widgetsLength") {
+function groupWidgetKeys(info, widgets = {}, groupKey = "widgetsLength") {
   const newInfo = info;
-  const costableWidgets = getCostableWidgets(widgets);
-  const widgetKeys = Object.keys(costableWidgets);
+  const widgetKeys = Object.keys(widgets);
   for (let i = 0; i < widgetKeys.length; i += 1) {
     const key = widgetKeys[i];
     if (typeof newInfo[groupKey][key] === "number") {
@@ -363,7 +362,6 @@ export async function preditReplaceDashboardWidgetsCredit(
     }
   }
 
-  
   const keys = Object.keys(widgetsLength);
   for (let i = 0; i < keys.length; i += 1) {
     const key = keys[i];

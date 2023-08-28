@@ -1,3 +1,4 @@
+import { getSensesiotDeviceKey } from "../services/sensesiot/device.js";
 import { getUserInfo } from "../services/user.js";
 
 /**
@@ -23,6 +24,16 @@ export default async function authenticate(
     ) {
       aedesClient.userData = {
         role: "api",
+      };
+      callback(null, true);
+      return;
+    }
+
+    const deviceInfo = await getSensesiotDeviceKey(uid);
+    if (deviceInfo) {
+      aedesClient.userData = {
+        uid: deviceInfo.uid,
+        role: "device",
       };
       callback(null, true);
       return;

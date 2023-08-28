@@ -10,7 +10,10 @@ export async function getSensesiotDevicesByUser(uid) {
   return devices;
 }
 
-export async function createSensesiotDevice(uid, { name = "", model = "" }) {
+export async function createSensesiotDevice(
+  uid,
+  { name = "", model = "", type = "custom" }
+) {
   const { max: maxCredits, predit: preditCredits } = await preditNewCredit(
     uid,
     { device: 1 }
@@ -22,19 +25,18 @@ export async function createSensesiotDevice(uid, { name = "", model = "" }) {
 
   const deviceCol = sensesiotV2.collection("devices");
   const today = new Date();
-  const type = "custom";
-
+  const deviceType = type || "custom";
   const data = {
     uid,
     deviceKey: objectHash({
       name,
       model,
-      type,
+      type: deviceType,
       createTime: today.getTime(),
     }),
     name,
     model,
-    type,
+    type: deviceType,
     createTime: today,
     lastestUpdateTime: today,
   };
@@ -48,13 +50,14 @@ export async function createSensesiotDevice(uid, { name = "", model = "" }) {
 
 export async function updateSensesiotDevice(uid, deviceId, data) {
   const deviceCol = sensesiotV2.collection("devices");
+  const deviceType = data.type || "custom";
   const { value } = await deviceCol.findOneAndUpdate(
     {
       _id: ObjectId(deviceId),
       uid,
     },
     {
-      $set: { ...data, lastestUpdateTime: new Date() },
+      $set: { ...data, type: deviceType, lastestUpdateTime: new Date() },
     },
     { returnDocument: "after" }
   );
