@@ -1,11 +1,10 @@
 import { Router, urlencoded } from "express";
 import multer from "multer";
 import Jimp from "jimp";
-import objectHash from "object-hash";
 
 import { error } from "../../utils/logging.js";
 import WebError from "../../utils/weberror.js";
-import { isDevRole, } from "../../utils/roles.js";
+import { isDevRole } from "../../utils/roles.js";
 import {
   createSensesiotNews,
   getSensesiotNews,
@@ -18,6 +17,7 @@ import {
   pathJoinBucket,
   sensesiotBucket,
 } from "../../database/firebase-storage.js";
+import { randomHash } from "../../utils/random.js";
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -106,10 +106,7 @@ router.post("/news/add", upload.single("imageFile"), async (req, res) => {
       const imgBuffer = await Jimp.read(req.file.buffer).then((img) =>
         img.resize(766, 400).getBufferAsync("image/png")
       );
-      filename = `news-${objectHash({
-        ts: Date.now(),
-        rng: Math.random(),
-      })}.png`;
+      filename = `news-${randomHash()}.png`;
 
       // async upload to storage
       await sensesiotBucket()
@@ -184,10 +181,7 @@ router.post(
         const imgBuffer = await Jimp.read(req.file.buffer).then((img) =>
           img.resize(766, 400).getBufferAsync("image/png")
         );
-        filename = `news-${objectHash({
-          ts: Date.now(),
-          rng: Math.random(),
-        })}.png`;
+        filename = `news-${randomHash()}.png`;
 
         await Promise.all([
           sensesiotBucket()

@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
-import objectHash from "object-hash";
 import { sensesiotV2 } from "../../database/mongodb.js";
 import { preditNewCredit } from "./credits.js";
+import { randomDeviceKey } from "../../utils/random.js";
 
 export async function getSensesiotDevicesByUser(uid) {
   const deviceCol = sensesiotV2.collection("devices");
@@ -28,12 +28,7 @@ export async function createSensesiotDevice(
   const deviceType = type || "custom";
   const data = {
     uid,
-    deviceKey: objectHash({
-      name,
-      model,
-      type: deviceType,
-      createTime: today.getTime(),
-    }),
+    deviceKey: randomDeviceKey(20),
     name,
     model,
     type: deviceType,

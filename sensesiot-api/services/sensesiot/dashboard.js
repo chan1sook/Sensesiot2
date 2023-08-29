@@ -107,7 +107,6 @@ export async function updateSensesiotWidgetData(uid, data, updatedData) {
 
   const targetDashboard = await dashboardCol.findOne({
     uid,
-    "widgets._id": data._id,
   });
 
   if (!targetDashboard) {

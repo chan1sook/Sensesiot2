@@ -3,10 +3,10 @@ import utc from "dayjs/plugin/utc.js";
 import timezone from "dayjs/plugin/timezone.js";
 
 import { ObjectId } from "mongodb";
-import objectHash from "object-hash";
 import { sensesiotBase } from "../database/mongodb.js";
 import { exchangeSensesiotCredit } from "./sensesiot/shop.js";
 import { mintCoin } from "./shop.js";
+import { randomHash } from "../utils/random.js";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -102,12 +102,8 @@ export async function generateRedeemCode({
   if (redeemValueTotal <= 0) {
     throw new Error("Total of redeemValue unit not 0");
   }
-  const codes = new Array(quantity).fill(undefined).map((ele, i) => ({
-    code: objectHash({
-      name,
-      i,
-      today,
-    }),
+  const codes = new Array(quantity).fill(undefined).map(() => ({
+    code: randomHash(),
     assigned: false,
     used: false,
   }));
