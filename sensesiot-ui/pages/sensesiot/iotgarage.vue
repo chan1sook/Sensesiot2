@@ -35,6 +35,17 @@
             </h4>
             <h4 v-else class="my-4 text-center font-italic">No devices.</h4>
           </template>
+          <template #cell(deviceKey)="{ item }">
+            <div class="d-flex-inline flex-row">
+              <span
+                v-for="(chunk, i) of chunkDeviceKey(item.deviceKey)"
+                :key="i"
+                class="mr-1"
+              >
+                {{ chunk }}
+              </span>
+            </div>
+          </template>
           <template #cell(actions)="data">
             <div
               class="d-flex flex-row justify-content-center"
@@ -275,9 +286,19 @@ export default {
     async copyDeviceKey({ item }) {
       try {
         await navigator.clipboard.writeText(item.deviceKey)
+        this.$bvToast.toast('Devicekey Copied', {
+          title: 'SensesIot'
+        })
       } catch (err) {
         console.error(err)
       }
+    },
+    chunkDeviceKey(deviceKey = '') {
+      const chunk = []
+      for (let i = 0; i < deviceKey.length; i += 4) {
+        chunk.push(deviceKey.substring(i, i + 4))
+      }
+      return chunk
     }
   }
 }
