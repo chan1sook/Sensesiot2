@@ -49,6 +49,7 @@
                 </b-dropdown-item>
               </b-nav-item-dropdown>
             </template>
+            <b-nav-item href="https://learn.sensesiot.net/"> Wiki </b-nav-item>
             <b-nav-item-dropdown right>
               <template #button-content>
                 <b-avatar
@@ -108,7 +109,8 @@
               </b-overlay>
             </b-nav-item-dropdown>
           </template>
-          <template v-else>
+          <template v-if="!isLogin">
+            <b-nav-item href="https://learn.sensesiot.net/"> Wiki </b-nav-item>
             <b-nav-item href="/login">Login</b-nav-item>
           </template>
         </b-navbar-nav>

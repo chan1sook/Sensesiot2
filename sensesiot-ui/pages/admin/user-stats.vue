@@ -8,7 +8,7 @@
         </h2>
         <h4>Total Users</h4>
         <div class="d-flex flex-row flex-wrap" style="gap: 0.5em">
-          <div class="font-bold">{{ allUserCounts }}</div>
+          <div class="font-weight-bold">{{ allUserCounts }}</div>
           <div class="ml-auto">Since: {{ formatDate(sinceDay) }}</div>
         </div>
         <div
@@ -38,7 +38,7 @@
         </div>
         <h4>User Count</h4>
         <div class="d-flex flex-row flex-wrap" style="gap: 0.5em">
-          <div class="font-bold">{{ userCounts }}</div>
+          <div class="font-weight-bold">{{ userCounts }}</div>
           <div class="ml-auto">
             {{ formatDate(startDate) }} - {{ formatDate(endDate - 1) }}
           </div>
@@ -64,7 +64,7 @@ import LineChart from '~/components/charts/LineChart.vue'
 export default {
   name: 'UserStatsAdminPage',
   components: {
-    LineChart,
+    LineChart
   },
   middleware: ['authDev'],
   async asyncData({ $axios, error }) {
@@ -84,12 +84,12 @@ export default {
       return {
         allUserCounts,
         userCounts,
-        userLoginStats,
+        userLoginStats
       }
     } catch (err) {
       error({
         statusCode: 500,
-        message: "Can't get user stats info",
+        message: "Can't get user stats info"
       })
     }
   },
@@ -99,7 +99,7 @@ export default {
       userCounts: 0,
       userLoginStats: [],
       statsMonth: new Date().getMonth(),
-      statsYear: new Date().getFullYear(),
+      statsYear: new Date().getFullYear()
     }
   },
   async fetch() {
@@ -114,7 +114,7 @@ export default {
     } catch (err) {
       this.error({
         statusCode: 500,
-        message: "Can't get user stats info",
+        message: "Can't get user stats info"
       })
     }
   },
@@ -123,7 +123,7 @@ export default {
       return new Array(12).fill(undefined).map((ele, i) => {
         return {
           text: dayjs().month(i).format('MMMM'),
-          value: i,
+          value: i
         }
       })
     },
@@ -145,25 +145,25 @@ export default {
             data: this.userLoginStats.map((ele) => {
               return {
                 x: new Date(ele.markTs),
-                y: ele.count,
+                y: ele.count
               }
-            }),
-          },
-        ],
+            })
+          }
+        ]
       }
     },
     chartOptions() {
       return {
         scales: {
           y: {
-            min: 0,
+            min: 0
           },
           x: {
             type: 'time',
             adapters: {
               date: {
-                locale: dateFnsLocaleTh,
-              },
+                locale: dateFnsLocaleTh
+              }
             },
             time: {
               tooltipFormat: 'd MMM yyyy HH:mm:ss',
@@ -173,20 +173,20 @@ export default {
                 minute: 'HH:mm',
                 hour: 'HH:mm',
                 day: 'd MMM',
-                month: 'MMM yyyy',
-              },
+                month: 'MMM yyyy'
+              }
             },
             min: this.startDate,
-            max: this.endDate,
-          },
+            max: this.endDate
+          }
         },
         plugins: {
           legend: {
-            onClick() {},
-          },
-        },
+            onClick() {}
+          }
+        }
       }
-    },
+    }
   },
   watch: {
     statsMonth() {
@@ -194,12 +194,12 @@ export default {
     },
     statsYear() {
       this.$fetch()
-    },
+    }
   },
   methods: {
     formatDate(date) {
       return dayjs(date).format('D MMMM YYYY')
-    },
-  },
+    }
+  }
 }
 </script>
