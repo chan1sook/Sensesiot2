@@ -4,7 +4,7 @@
       <b-navbar-brand class="d-inline-flex align-items-center gap-2" href="/">
         <img src="/icon.png" height="24" />
         <span class="font-weight-bold">SENSES</span>
-        <span class="font-weight-bold text-sm">(BETA)</span>
+        <span class="font-weight-bold text-sm">V1.0</span>
       </b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
@@ -22,11 +22,8 @@
                 Report
               </b-dropdown-item>
               <b-dropdown-divider></b-dropdown-divider>
-              <b-dropdown-item
-                href="https://github.com/chan1sook/SensesiotProtocolLib"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <b-dropdown-item href="https://github.com/chan1sook/SensesiotProtocolLib" target="_blank"
+                rel="noopener noreferrer">
                 Get Firmware
               </b-dropdown-item>
               <b-dropdown-divider></b-dropdown-divider>
@@ -52,11 +49,7 @@
             <b-nav-item href="https://learn.sensesiot.net/"> Wiki </b-nav-item>
             <b-nav-item-dropdown right>
               <template #button-content>
-                <b-avatar
-                  size="sm"
-                  :src="profilePicture"
-                  class="mr-1"
-                ></b-avatar>
+                <b-avatar size="sm" :src="profilePicture" class="mr-1"></b-avatar>
                 <span v-if="isSensesiotPages">
                   <font-awesome-icon :icon="['fas', 'bolt']" fixed-width />
                   {{ formatSensesiotCredit(authUser) }}
@@ -68,11 +61,7 @@
               </template>
               <b-dropdown-text>
                 <span style="white-space: nowrap">
-                  <b-avatar
-                    size="sm"
-                    :src="profilePicture"
-                    class="mr-1"
-                  ></b-avatar>
+                  <b-avatar size="sm" :src="profilePicture" class="mr-1"></b-avatar>
                   <span>{{ userDisplayName }}</span>
                 </span>
               </b-dropdown-text>
@@ -117,14 +106,8 @@
       </b-collapse>
     </b-navbar>
     <slot></slot>
-    <sensesiot-news-modal
-      id="modal-news"
-      :news="news"
-      :offset="newsOffset"
-      :avaliable="avaliableNews"
-      :skip-popup-today="skipPopupToday"
-      @close="closeNews"
-    >
+    <sensesiot-news-modal id="modal-news" :news="news" :offset="newsOffset" :avaliable="avaliableNews"
+      :skip-popup-today="skipPopupToday" @close="closeNews">
     </sensesiot-news-modal>
   </div>
 </template>
@@ -298,12 +281,15 @@ export default {
   min-height: 100vh;
   background-color: rgb(204, 204, 204);
 }
+
 .gap-2 {
   column-gap: 0.5rem;
 }
 
 .text-sm {
-  font-size: 0.875rem; /* 14px */
-  line-height: 1.25rem; /* 20px */
+  font-size: 0.875rem;
+  /* 14px */
+  line-height: 1.25rem;
+  /* 20px */
 }
 </style>
