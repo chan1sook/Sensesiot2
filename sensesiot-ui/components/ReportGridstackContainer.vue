@@ -2,43 +2,16 @@
   <div ref="gridstack" class="grid-stack">
     <template v-if="ready">
       <template v-for="widget of widgets">
-        <label-sensesiot-report-widget
-          v-if="widget.type === 'label'"
-          ref="widgets"
-          :key="`widget-label-${widget._id}`"
-          :widget="widget"
-          :theme="theme"
-          :gridstack="gridstack"
-          :editing="editing"
-          @edit="editWidget"
-          @remove="removeWidget"
-        />
-        <chart-sensesiot-report-widget
-          v-else-if="widget.type === 'chart'"
-          ref="widgets"
-          :key="`widget-chart-${widget._id}`"
-          :widget="widget"
-          :theme="theme"
-          :value="reportDataFunction(widget)"
-          :report-mode="reportMode"
-          :gridstack="gridstack"
-          :editing="editing"
-          :adjustment-date="getAdjustmentDate(widget)"
-          @edit="editWidget"
-          @remove="removeWidget"
-          @adjustDate="$emit('adjustDate', $event)"
-        />
-        <default-sensesiot-report-widget
-          v-else
-          :key="`widget-${widget._id}`"
-          ref="widgets"
-          :widget="widget"
-          :theme="theme"
-          :gridstack="gridstack"
-          :editing="editing"
-          @edit="editWidget"
-          @remove="removeWidget"
-        />
+        <label-sensesiot-report-widget v-if="widget.type === 'label'" ref="widgets" :key="`widget-label-${widget._id}`"
+          :widget="widget" :theme="theme" :gridstack="gridstack" :editing="editing" @edit="editWidget"
+          @remove="removeWidget" />
+        <chart-sensesiot-report-widget v-else-if="widget.type === 'chart'" ref="widgets"
+          :key="`widget-chart-${widget._id}`" :widget="widget" :theme="theme" :value="reportDataFunction(widget)"
+          :report-mode="reportMode" :gridstack="gridstack" :editing="editing"
+          :adjustment-date="getAdjustmentDate(widget)" @edit="editWidget" @remove="removeWidget"
+          @adjustDate="$emit('adjustDate', $event)" @exportData="$emit('exportData', $event)" />
+        <default-sensesiot-report-widget v-else :key="`widget-${widget._id}`" ref="widgets" :widget="widget"
+          :theme="theme" :gridstack="gridstack" :editing="editing" @edit="editWidget" @remove="removeWidget" />
       </template>
     </template>
   </div>

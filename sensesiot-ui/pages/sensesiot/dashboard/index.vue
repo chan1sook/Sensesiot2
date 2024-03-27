@@ -1,33 +1,16 @@
 <template>
   <sensesiot-base-container>
-    <div
-      class="p-4 dashboard"
-      :class="[theme, editMode ? 'editing' : '']"
-      style="flex-grow: 1"
-      :style="themeStyle"
-    >
+    <div class="p-4 dashboard" :class="[theme, editMode ? 'editing' : '']" style="flex-grow: 1" :style="themeStyle">
       <b-button-toolbar class="position-fixed dashboard-toolbar-top">
         <b-input-group prepend="Dashboard" style="flex-grow: 1">
-          <b-select
-            v-model="selectedDashboardId"
-            :options="dashboardOptions"
-            :disabled="editMode"
-          >
-            <b-form-select-option
-              v-if="selectedDashboardId === null"
-              :value="null"
-              disabled
-            >
+          <b-select v-model="selectedDashboardId" :options="dashboardOptions" :disabled="editMode">
+            <b-form-select-option v-if="selectedDashboardId === null" :value="null" disabled>
               -- No Dashboard --
             </b-form-select-option>
           </b-select>
 
           <b-input-group-append>
-            <b-button
-              v-if="!editMode"
-              variant="success"
-              @click="showCreateDashboardModal"
-            >
+            <b-button v-if="!editMode" variant="success" @click="showCreateDashboardModal">
               <font-awesome-icon :icon="['fas', 'plus']" fixed-width />
 
               <span class="d-none d-lg-inline">Create</span>
@@ -39,11 +22,7 @@
           </b-input-group-append>
         </b-input-group>
 
-        <b-button
-          v-if="!editMode && selectedDashboardId !== null"
-          variant="primary"
-          @click="toEditMode"
-        >
+        <b-button v-if="!editMode && selectedDashboardId !== null" variant="primary" @click="toEditMode">
           <font-awesome-icon :icon="['fas', 'pencil']" fixed-width />
 
           <span class="d-none d-lg-inline">Edit</span>
@@ -76,62 +55,31 @@
           <span class="d-none d-lg-inline"> Share</span>
         </b-button>
       </b-button-toolbar>
-      <dashboard-gridstack-container
-        style="margin-top: 3em"
-        :widgets="
-          editMode
-            ? editDashboardData.widgets
-            : selectedDashboard
-            ? selectedDashboard.widgets
-            : []
-        "
-        :theme="theme"
-        :editing="editMode"
-        :data-function="getWidgetData"
-        @pushControl="onPushControl"
-        @change="onWidgetChange"
-        @editWidget="onEditWidget"
-        @removeWidget="onRemoveWidget"
-      ></dashboard-gridstack-container>
+      <dashboard-gridstack-container style="margin-top: 3em" :widgets="editMode
+      ? editDashboardData.widgets
+      : selectedDashboard
+        ? selectedDashboard.widgets
+        : []
+      " :theme="theme" :editing="editMode" :data-function="getWidgetData" @pushControl="onPushControl"
+        @change="onWidgetChange" @editWidget="onEditWidget" @removeWidget="onRemoveWidget"
+        @exportData="onExportData"></dashboard-gridstack-container>
     </div>
-    <create-sensesiot-dashboard-modal
-      id="modal-create-dashboard"
-      :dashboard-data="modalDashboardData"
-      :credit-info="creditInfo"
-      @ok="createDashboard"
-    >
+    <create-sensesiot-dashboard-modal id="modal-create-dashboard" :dashboard-data="modalDashboardData"
+      :credit-info="creditInfo" @ok="createDashboard">
     </create-sensesiot-dashboard-modal>
-    <edit-sensesiot-dashboard-modal
-      id="modal-edit-dashboard"
-      :dashboard-data="modalDashboardData"
-      @ok="applyToEditDashboardData"
-    >
+    <edit-sensesiot-dashboard-modal id="modal-edit-dashboard" :dashboard-data="modalDashboardData"
+      @ok="applyToEditDashboardData">
     </edit-sensesiot-dashboard-modal>
-    <delete-sensesiot-dashboard-modal
-      id="modal-delete-dashboard"
-      :dashboard-data="modalDashboardData"
-      :credit-info="creditInfo"
-      @ok="deleteDashboard"
-    >
+    <delete-sensesiot-dashboard-modal id="modal-delete-dashboard" :dashboard-data="modalDashboardData"
+      :credit-info="creditInfo" @ok="deleteDashboard">
     </delete-sensesiot-dashboard-modal>
-    <share-link-sensesiot-dashboard-modal
-      id="modal-share-link-dashboard"
-      :dashboard-data="modalDashboardData"
-    >
+    <share-link-sensesiot-dashboard-modal id="modal-share-link-dashboard" :dashboard-data="modalDashboardData">
     </share-link-sensesiot-dashboard-modal>
-    <add-sensesiot-widget-modal
-      id="modal-new-widget"
-      :credit-info="creditInfo"
-      :credit-costs="creditCosts"
-      @ok="addWidget"
-    >
+    <add-sensesiot-widget-modal id="modal-new-widget" :credit-info="creditInfo" :credit-costs="creditCosts"
+      @ok="addWidget">
     </add-sensesiot-widget-modal>
-    <config-sensesiot-widget-modal
-      id="modal-edit-widget"
-      :widget="editWidgetData"
-      :devices="devices"
-      @ok="applyEditWidget"
-    >
+    <config-sensesiot-widget-modal id="modal-edit-widget" :widget="editWidgetData" :devices="devices"
+      @ok="applyEditWidget">
     </config-sensesiot-widget-modal>
   </sensesiot-base-container>
 </template>
@@ -410,6 +358,15 @@ export default {
         this.editDashboardData.widgets.splice(index, 1)
       }
     },
+    onExportData(exportParams) {
+      const url = `/api/sensesiot/dashboard-export/${this.selectedDashboardId}/${exportParams._id}/${exportParams.type}`
+      const link = window.document.createElement("a");
+      window.document.body.append(link);
+      link.href = url;
+      link.download = true;
+      link.click();
+      link.remove();
+    },
     async showAddWidgetModal() {
       const selectedCostableWidgets = getCostableWidgets(
         this.selectedDashboard.widgets
@@ -620,13 +577,11 @@ export default {
 }
 
 .editing {
-  background-image: repeating-linear-gradient(
-    -45deg,
-    transparent,
-    transparent 12px,
-    rgba(128, 128, 128, 0.3) 12px,
-    rgba(128, 128, 128, 0.3) 24px
-  );
+  background-image: repeating-linear-gradient(-45deg,
+      transparent,
+      transparent 12px,
+      rgba(128, 128, 128, 0.3) 12px,
+      rgba(128, 128, 128, 0.3) 24px);
   background-attachment: fixed;
 }
 

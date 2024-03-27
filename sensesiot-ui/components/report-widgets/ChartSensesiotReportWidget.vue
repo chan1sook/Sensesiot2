@@ -1,51 +1,37 @@
 <template>
-  <sensesiot-report-widget-container
-    :widget="widget"
-    :theme="theme"
-    :gridstack="gridstack"
-    :editing="editing"
-    :min-w="1"
-    :min-h="3"
-    @edit="editWidget"
-    @remove="removeWidget"
-  >
-    <div
-      class="p-2 d-flex flex-column"
-      style="gap: 0.5em; position: absolute; height: 100%; width: 100%"
-    >
-      <vue-markdown
-        v-if="widget.title"
-        inline
-        :source="widget.title || 'Chart'"
-        class="text-center font-weight-bold"
-        style="font-size: 1.25em"
-      ></vue-markdown>
+  <sensesiot-report-widget-container :widget="widget" :theme="theme" :gridstack="gridstack" :editing="editing"
+    :min-w="1" :min-h="3" @edit="editWidget" @remove="removeWidget">
+    <div class="p-2 d-flex flex-column" style="gap: 0.5em; position: absolute; height: 100%; width: 100%">
+      <vue-markdown v-if="widget.title" inline :source="widget.title || 'Chart'" class="text-center font-weight-bold"
+        style="font-size: 1.25em"></vue-markdown>
       <b-input-group v-if="reportMode" prepend="Date">
-        <b-datepicker
-          boundary="viewport"
-          :value="currentDate"
-          value-as-date
-          no-flip
-          :disabled="widget.dataDateType !== 'adjustable'"
-          @input="
-            $emit('adjustDate', {
-              date: $event,
-              _id: widget._id,
-            })
-          "
-        ></b-datepicker>
+        <b-datepicker boundary="viewport" :value="currentDate" value-as-date no-flip
+          :disabled="widget.dataDateType !== 'adjustable'" @input="
+    $emit('adjustDate', {
+      date: $event,
+      _id: widget._id,
+    })
+    "></b-datepicker>
       </b-input-group>
       <div ref="baseContainer" style="flex-grow: 1; min-height: 200px">
-        <mixed-chart
-          ref="chartContainer"
-          class="mx-auto"
-          :style="chartBaseStyle"
-          :chart-options="chartOptions"
-          :chart-data="chartData"
-          :chart-id="chartId"
-          :width="width"
-          :height="height"
-        ></mixed-chart>
+        <mixed-chart ref="chartContainer" class="mx-auto" :style="chartBaseStyle" :chart-options="chartOptions"
+          :chart-data="chartData" :chart-id="chartId" :width="width" :height="height"></mixed-chart>
+      </div>
+      <div v-if="widget.showExportBtn" class="d-flex justify-content-end">
+        <b-input-group prepend="Export" class="w-auto">
+          <b-input-group-append>
+            <b-button variant="primary" type="button" :disabled="editing" title="CSV"
+              @click="emitExportData(widget._id, 'csv')">
+              <font-awesome-icon :icon="['fas', 'fa-file-csv']"></font-awesome-icon>
+              CSV
+            </b-button>
+            <b-button variant="primary" type="button" :disabled="editing" title="XLSX"
+              @click="emitExportData(widget._id, 'xlsx')">
+              <font-awesome-icon :icon="['fas', 'fa-file-excel']"></font-awesome-icon>
+              XLSX
+            </b-button>
+          </b-input-group-append>
+        </b-input-group>
       </div>
     </div>
   </sensesiot-report-widget-container>
@@ -171,7 +157,7 @@ export default {
         },
         plugins: {
           legend: {
-            onClick() {},
+            onClick() { },
             labels: {
               color: this.getLabelColor(this.widget, this.theme),
             },
@@ -377,6 +363,12 @@ export default {
     onResize() {
       this.resizeChart()
     },
+    emitExportData(id, type) {
+      this.$emit('exportData', {
+        _id: id,
+        type,
+      })
+    }
   },
 }
 </script>

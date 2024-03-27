@@ -17,7 +17,7 @@ export async function getSensesiotReportById(dashboardId) {
 
   const report = await reportCol.findOne({ _id: ObjectId(dashboardId) });
   if (!report) {
-    throw new Error("Dashboard not found");
+    throw new Error("Report not found");
   }
 
   return report;

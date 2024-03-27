@@ -2,77 +2,24 @@
   <div ref="gridstack" class="grid-stack">
     <template v-if="ready">
       <template v-for="widget of widgets">
-        <label-sensesiot-widget
-          v-if="widget.type === 'label'"
-          ref="widgets"
-          :key="`widget-label-${widget._id}`"
-          :widget="widget"
-          :theme="theme"
-          :gridstack="gridstack"
-          :editing="editing"
-          @edit="editWidget"
-          @remove="removeWidget"
-        />
-        <gauge-sensesiot-widget
-          v-else-if="widget.type === 'gauge'"
-          ref="widgets"
-          :key="`widget-gauge-${widget._id}`"
-          :widget="widget"
-          :theme="theme"
-          :value="dataFunction(widget)"
-          :gridstack="gridstack"
-          :editing="editing"
-          @edit="editWidget"
-          @remove="removeWidget"
-        />
-        <chart-sensesiot-widget
-          v-else-if="widget.type === 'chart'"
-          ref="widgets"
-          :key="`widget-chart-${widget._id}`"
-          :widget="widget"
-          :theme="theme"
-          :value="dataFunction(widget)"
-          :gridstack="gridstack"
-          :editing="editing"
-          @edit="editWidget"
-          @remove="removeWidget"
-        />
-        <control-sensesiot-widget
-          v-else-if="widget.type === 'control'"
-          ref="widgets"
-          :key="`widget-control-${widget._id}`"
-          :widget="widget"
-          :theme="theme"
-          :state="dataFunction(widget)"
-          :gridstack="gridstack"
-          :editing="editing"
-          :no-control="noControl"
-          @control="pushControl"
-          @edit="editWidget"
-          @remove="removeWidget"
-        />
-        <condition-sensesiot-widget
-          v-else-if="widget.type === 'condition'"
-          ref="widgets"
-          :key="`widget-condition-${widget._id}`"
-          :widget="widget"
-          :theme="theme"
-          :gridstack="gridstack"
-          :editing="editing"
-          @edit="editWidget"
-          @remove="removeWidget"
-        />
-        <default-sensesiot-widget
-          v-else
-          :key="`widget-${widget._id}`"
-          ref="widgets"
-          :widget="widget"
-          :theme="theme"
-          :gridstack="gridstack"
-          :editing="editing"
-          @edit="editWidget"
-          @remove="removeWidget"
-        />
+        <label-sensesiot-widget v-if="widget.type === 'label'" ref="widgets" :key="`widget-label-${widget._id}`"
+          :widget="widget" :theme="theme" :gridstack="gridstack" :editing="editing" @edit="editWidget"
+          @remove="removeWidget" />
+        <gauge-sensesiot-widget v-else-if="widget.type === 'gauge'" ref="widgets" :key="`widget-gauge-${widget._id}`"
+          :widget="widget" :theme="theme" :value="dataFunction(widget)" :gridstack="gridstack" :editing="editing"
+          @edit="editWidget" @remove="removeWidget" />
+        <chart-sensesiot-widget v-else-if="widget.type === 'chart'" ref="widgets" :key="`widget-chart-${widget._id}`"
+          :widget="widget" :theme="theme" :value="dataFunction(widget)" :gridstack="gridstack" :editing="editing"
+          @edit="editWidget" @remove="removeWidget" @exportData="exportData" />
+        <control-sensesiot-widget v-else-if="widget.type === 'control'" ref="widgets"
+          :key="`widget-control-${widget._id}`" :widget="widget" :theme="theme" :state="dataFunction(widget)"
+          :gridstack="gridstack" :editing="editing" :no-control="noControl" @control="pushControl" @edit="editWidget"
+          @remove="removeWidget" />
+        <condition-sensesiot-widget v-else-if="widget.type === 'condition'" ref="widgets"
+          :key="`widget-condition-${widget._id}`" :widget="widget" :theme="theme" :gridstack="gridstack"
+          :editing="editing" @edit="editWidget" @remove="removeWidget" />
+        <default-sensesiot-widget v-else :key="`widget-${widget._id}`" ref="widgets" :widget="widget" :theme="theme"
+          :gridstack="gridstack" :editing="editing" @edit="editWidget" @remove="removeWidget" />
       </template>
     </template>
   </div>
@@ -132,7 +79,7 @@ export default {
             return new Array(length).fill(undefined).map((ele, i) => {
               return {
                 x: new Date(Date.now() + (i - length) * 60000),
-                y: Math.round(Math.random() * 100),
+                y: Math.round(50 + Math.random() * 5),
               }
             })
           case 'control':
@@ -223,6 +170,9 @@ export default {
     },
     removeWidget(id) {
       this.$emit('removeWidget', id)
+    },
+    exportData(params) {
+      this.$emit('exportData', params)
     },
     pushControl(metadata) {
       this.$emit('pushControl', metadata)

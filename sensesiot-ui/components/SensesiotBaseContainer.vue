@@ -4,7 +4,7 @@
       <b-navbar-brand class="d-inline-flex align-items-center gap-2" href="/">
         <img src="/icon.png" height="24" />
         <span class="font-weight-bold">SENSES</span>
-        <span class="font-weight-bold text-sm">V1.0</span>
+        <span class="font-weight-bold text-sm">V1.1</span>
       </b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
@@ -29,9 +29,11 @@
               <b-dropdown-divider></b-dropdown-divider>
               <b-dropdown-item href="/sensesiot/shop"> Shops </b-dropdown-item>
             </b-nav-item-dropdown>
+
             <template v-if="isManager">
               <b-nav-item href="/ads">Ads</b-nav-item>
             </template>
+
             <template v-if="isDev">
               <b-nav-item-dropdown right>
                 <template #button-content> Dev Menu </template>
@@ -48,6 +50,7 @@
             </template>
             <b-nav-item href="https://learn.sensesiot.net/"> Wiki </b-nav-item>
             <b-nav-item-dropdown right>
+
               <template #button-content>
                 <b-avatar size="sm" :src="profilePicture" class="mr-1"></b-avatar>
                 <span v-if="isSensesiotPages">
@@ -65,6 +68,7 @@
                   <span>{{ userDisplayName }}</span>
                 </span>
               </b-dropdown-text>
+
               <template v-if="isSensesiotPages">
                 <b-dropdown-divider></b-dropdown-divider>
                 <b-dropdown-text>
@@ -98,6 +102,7 @@
               </b-overlay>
             </b-nav-item-dropdown>
           </template>
+
           <template v-if="!isLogin">
             <b-nav-item href="https://learn.sensesiot.net/"> Wiki </b-nav-item>
             <b-nav-item href="/login">Login</b-nav-item>

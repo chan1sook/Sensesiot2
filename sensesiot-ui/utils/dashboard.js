@@ -50,7 +50,8 @@ export const widgetsDescription = [
     label: 'Chart',
     description:
       '## Chart\n\nSimple Chart for show timeseries data.\n\n' +
-      '### Supports\n\n- Bar Chart\n- Line Chart\n- Area Chart',
+      '### Supports\n\n- Bar Chart\n- Line Chart\n- Area Chart\n\n' +
+      'All chart can export data to CSV/Excel',
   },
   {
     name: 'control',
@@ -120,6 +121,7 @@ export function getDefaultWidgetData(type = 'label') {
         useThemeLabelColor: true,
         dataDevice: '',
         dataSlot: 1,
+        showExportBtn: false,
       }
     case 'control':
       return {
@@ -377,6 +379,12 @@ export function getConfigableWidgetParams(
           label: 'Slot',
           type: 'number',
           min: 1,
+        },
+        {
+          field: 'showExportBtn',
+          label: 'Export Chart Data Button',
+          choiceLabel: 'Show Export Chart Data Button',
+          type: 'checkbox',
         },
       ]
     case 'control':

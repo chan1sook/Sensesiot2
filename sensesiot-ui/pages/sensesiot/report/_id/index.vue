@@ -1,48 +1,20 @@
 <template>
   <sensesiot-base-container>
-    <b-container
-      class="p-4 report"
-      :class="[report.theme]"
-      style="flex-grow: 1"
-      :style="themeStyle"
-    >
+    <b-container class="p-4 report" :class="[report.theme]" style="flex-grow: 1" :style="themeStyle">
       <h2 class="text-center">{{ report.title || report.name }}</h2>
       <b-button-toolbar class="report-toolbar-top d-print-none">
         <b-button variant="success" @click="printPage">
           <font-awesome-icon :icon="['fas', 'fa-print']" />
           <span class="d-none d-sm-inline"> Print</span>
         </b-button>
-        <!-- <b-button variant="success" disabled>
-          <font-awesome-icon :icon="['fas', 'fa-file-csv']" />
-          <span class="d-none d-sm-inline"> Export CSV</span>
-        </b-button>
-        <b-button variant="primary" disabled>
-          <font-awesome-icon :icon="['fas', 'fa-file-pdf']" />
-          <span class="d-none d-sm-inline"> Export PDF</span>
-        </b-button>
-        <b-button disabled>
-          <font-awesome-icon :icon="['fas', 'fa-file-excel']" />
-          <span class="d-none d-sm-inline"> Export .xlsx</span>
-        </b-button> -->
-        <b-button
-          v-if="isLogin"
-          :href="`/sensesiot/report/${report._id}/edit`"
-          class="ml-auto"
-          variant="warning"
-        >
+        <b-button v-if="isLogin" :href="`/sensesiot/report/${report._id}/edit`" class="ml-auto" variant="warning">
           <font-awesome-icon :icon="['fas', 'fa-pencil']" />
           <span> Edit</span>
         </b-button>
       </b-button-toolbar>
-      <report-gridstack-container
-        style="margin-top: 3em"
-        :widgets="report.widgets"
-        report-mode
-        :adjustment-dates="adjustmentDates"
-        :report-data-function="getReportWidgetData"
-        :theme="report.theme"
-        @adjustDate="adjustDate"
-      ></report-gridstack-container>
+      <report-gridstack-container style="margin-top: 3em" :widgets="report.widgets" report-mode
+        :adjustment-dates="adjustmentDates" :report-data-function="getReportWidgetData" :theme="report.theme"
+        @adjustDate="adjustDate" @exportData="onExportData"></report-gridstack-container>
     </b-container>
   </sensesiot-base-container>
 </template>
@@ -114,6 +86,19 @@ export default {
     printPage() {
       print()
     },
+    onExportData(exportParams) {
+      const reportid = this.report._id
+      const params = new URLSearchParams({
+        adjustmentDates: JSON.stringify(this.adjustmentDates),
+      })
+      const url = `/api/sensesiot/report-export/${reportid}/${exportParams._id}/${exportParams.type}?${params.toString()}`
+      const link = window.document.createElement("a")
+      window.document.body.append(link);
+      link.href = url;
+      link.download = true;
+      link.click();
+      link.remove();
+    },
   },
 }
 </script>
@@ -127,4 +112,4 @@ export default {
 .report-toolbar-top {
   gap: 0.5em;
 }
-</style>
+</style>import { createElement } from 'core/utils/xml'

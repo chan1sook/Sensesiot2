@@ -36,7 +36,8 @@ export const reportWidgetsDescription = [
     label: 'Chart',
     description:
       '## Chart\n\nComplex Chart for show timeseries data.\n\n' +
-      '### Supports\n\n- Bar Chart\n- Line Chart',
+      '### Supports\n\n- Bar Chart\n- Line Chart\n\n' +
+      'All chart can export data to CSV/Excel',
   },
 ]
 
@@ -85,6 +86,7 @@ export function getDefaultReportWidgetData(type = 'label') {
         yAxisMax: 100,
         datasetCount: 1,
         ...generateChartDataOption(MAX_CHART_COUNT),
+        showExportBtn: false,
       }
     default:
       return {}
@@ -277,6 +279,12 @@ export function getConfigableReportWidgetParams(
           type: 'color',
           hideIfFieldTrue: 'useThemeLabelColor',
         },
+        {
+          field: 'showExportBtn',
+          label: 'Export Chart Data Button',
+          choiceLabel: 'Show Export Chart Data Button',
+          type: 'checkbox',
+        },
       ]
     default:
       return []
@@ -393,7 +401,7 @@ export function sampleReportChartData(widget) {
   ) {
     result.push({
       x: new Date(ts),
-      y: Math.round(Math.random() * 100),
+      y: Math.round(50 + Math.random() * 5),
     })
   }
 
